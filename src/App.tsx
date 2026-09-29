@@ -421,7 +421,7 @@ function App() {
 
       // Atmosphere
       if (planetData.hasAtmosphere) {
-        const atmosGeometry = new THREE.SphereGeometry(planetData.radius * 1.15, 32, 32);
+        const atmosGeometry = new THREE.SphereGeometry(planetData.radius * 1.06, 32, 32);
         const atmosColor = new THREE.Color(planetData.atmosphereColor);
         const atmosMaterial = new THREE.ShaderMaterial({
           vertexShader: atmosphereVertexShader,
@@ -429,10 +429,10 @@ function App() {
           uniforms: {
             uColor: { value: atmosColor },
             uCameraPosition: { value: cameraRef.current?.position || new THREE.Vector3() },
-            uIntensity: { value: planetData.name === 'Earth' ? 1.2 : 0.8 },
+            uIntensity: { value: planetData.name === 'Earth' ? 1.0 : 0.6 },
           },
           transparent: true,
-          blending: THREE.AdditiveBlending,
+          blending: THREE.NormalBlending,
           side: THREE.FrontSide,
           depthWrite: false,
         });

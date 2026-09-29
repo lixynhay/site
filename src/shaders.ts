@@ -122,10 +122,22 @@ export const atmosphereFragmentShader = `
   
   void main() {
     vec3 viewDir = normalize(uCameraPosition - vWorldPosition);
-    float fresnel = pow(1.0 - abs(dot(vNormal, viewDir)), 3.0);
     
-    vec3 color = uColor * (fresnel * uIntensity);
-    float alpha = fresnel * uIntensity * 0.8;
+    // Fresnel - how much we're looking at the edge
+    float NdotV = dot(vNormal, viewDir);
+    
+    // Only show atmosphere at the edges (limb)
+    float rim = 1.0 - max(0.0, NdotV);
+    
+    // Very smooth falloff - no hard edges
+    rim = pow(rim, 4.0);
+    
+    // Soft intensity curve
+    float intensity = rim * uIntensity * 0.4;
+    
+    // Gentle color with low alpha
+    vec3 color = uColor * intensity;
+    float alpha = clamp(intensity * 0.5, 0.0, 0.35);
     
     gl_FragColor = vec4(color, alpha);
   }
