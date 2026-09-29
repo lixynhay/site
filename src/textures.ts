@@ -152,47 +152,54 @@ export function generateEarthTexture(): THREE.CanvasTexture {
   const ctx = canvas.getContext('2d')!;
   const imageData = ctx.createImageData(size, size);
 
-  const ocean: [number, number, number] = [30, 80, 180];
-  const deepOcean: [number, number, number] = [15, 40, 120];
-  const land: [number, number, number] = [50, 130, 50];
-  const desert: [number, number, number] = [180, 160, 100];
-  const mountain: [number, number, number] = [120, 100, 80];
-  const snow: [number, number, number] = [240, 245, 255];
-  const ice: [number, number, number] = [220, 235, 250];
+  const ocean: [number, number, number] = [20, 60, 150];
+  const deepOcean: [number, number, number] = [10, 30, 100];
+  const shallowOcean: [number, number, number] = [40, 100, 180];
+  const land: [number, number, number] = [40, 110, 40];
+  const forest: [number, number, number] = [30, 90, 30];
+  const desert: [number, number, number] = [190, 170, 110];
+  const mountain: [number, number, number] = [110, 95, 75];
+  const snow: [number, number, number] = [245, 248, 255];
+  const ice: [number, number, number] = [225, 238, 252];
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
-      const nx = x / size * 8;
-      const ny = y / size * 8;
+      const nx = x / size * 10;
+      const ny = y / size * 10;
       const lat = (y / size - 0.5) * Math.PI;
 
-      const continent = fbm(nx + 3.7, ny + 2.1, 6);
-      const detail = fbm(nx * 4, ny * 4, 4);
-      const elevation = continent * 0.7 + detail * 0.3;
+      const continent = fbm(nx + 3.7, ny + 2.1, 7);
+      const detail = fbm(nx * 5, ny * 5, 5);
+      const micro = fbm(nx * 15, ny * 15, 3);
+      const elevation = continent * 0.6 + detail * 0.3 + micro * 0.1;
 
       let color: [number, number, number];
       const absLat = Math.abs(lat);
 
-      if (absLat > 1.3) {
+      if (absLat > 1.25) {
         color = ice;
+      } else if (elevation < 0.38) {
+        color = lerpColor(deepOcean, ocean, elevation / 0.38);
       } else if (elevation < 0.42) {
-        color = lerpColor(deepOcean, ocean, elevation / 0.42);
+        color = lerpColor(ocean, shallowOcean, (elevation - 0.38) / 0.04);
       } else if (elevation < 0.48) {
         color = land;
-        if (absLat < 0.5 && detail > 0.5) {
-          color = lerpColor(land, desert, (detail - 0.5) * 2);
+        if (absLat < 0.4 && detail > 0.5) {
+          color = lerpColor(land, desert, (detail - 0.5) * 2.5);
+        } else if (absLat > 0.3 && absLat < 0.8) {
+          color = lerpColor(land, forest, (detail - 0.3) * 1.5);
         }
       } else if (elevation < 0.6) {
-        color = lerpColor(land, mountain, (elevation - 0.48) / 0.12);
+        color = lerpColor(forest, mountain, (elevation - 0.48) / 0.12);
       } else {
-        color = lerpColor(mountain, snow, Math.min(1, (elevation - 0.6) / 0.15));
+        color = lerpColor(mountain, snow, Math.min(1, (elevation - 0.6) / 0.12));
       }
 
-      // Clouds
-      const cloud = fbm(nx * 2 + 10, ny * 2 + 10, 4);
-      if (cloud > 0.55) {
-        const cloudIntensity = (cloud - 0.55) * 3;
-        color = lerpColor(color, [255, 255, 255], Math.min(0.7, cloudIntensity));
+      // Clouds with more detail
+      const cloud = fbm(nx * 2.5 + 10, ny * 2.5 + 10, 5);
+      if (cloud > 0.52) {
+        const cloudIntensity = (cloud - 0.52) * 2.5;
+        color = lerpColor(color, [255, 255, 255], Math.min(0.8, cloudIntensity));
       }
 
       const idx = (y * size + x) * 4;
@@ -263,50 +270,60 @@ export function generateJupiterTexture(): THREE.CanvasTexture {
   const imageData = ctx.createImageData(size, size);
 
   const bands: [number, number, number][] = [
+    [220, 185, 140],
+    [245, 210, 160],
+    [190, 140, 90],
+    [225, 190, 140],
+    [170, 120, 80],
     [210, 170, 120],
-    [240, 200, 150],
-    [180, 130, 80],
-    [220, 180, 130],
-    [160, 110, 70],
+    [235, 200, 150],
+    [180, 130, 85],
     [200, 160, 110],
-    [230, 190, 140],
-    [170, 120, 75],
+    [240, 205, 155],
   ];
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
-      const nx = x / size * 12;
+      const nx = x / size * 14;
       const ny = y / size;
-      const bandIndex = Math.floor(ny * bands.length * 2) % bands.length;
+      
+      // More complex band structure
+      const bandNoise = fbm(nx * 0.5, ny * 25, 4) * 0.08;
+      const bandPosition = (ny + bandNoise) * bands.length * 2.5;
+      const bandIndex = Math.floor(bandPosition) % bands.length;
       const nextBand = (bandIndex + 1) % bands.length;
-      const bandT = (ny * bands.length * 2) % 1;
+      const bandT = bandPosition % 1;
+      
+      // Smooth band transition
+      const smoothT = bandT * bandT * (3 - 2 * bandT);
+      const turbulence = fbm(nx + ny * 3, ny * 25, 5) * 0.2;
+      const bandColor = lerpColor(bands[bandIndex], bands[nextBand], smoothT + turbulence);
 
-      const turbulence = fbm(nx + ny * 2, ny * 20, 4) * 0.15;
-      const bandColor = lerpColor(bands[bandIndex], bands[nextBand], bandT + turbulence);
-
-      // Great Red Spot
-      const spotX = 0.65;
-      const spotY = 0.58;
-      const dx = (x / size - spotX) * 2;
-      const dy = (y / size - spotY) * 4;
+      // Great Red Spot - more realistic
+      const spotX = 0.62;
+      const spotY = 0.55;
+      const dx = (x / size - spotX) * 2.5;
+      const dy = (y / size - spotY) * 5;
       const spotDist = Math.sqrt(dx * dx + dy * dy);
       let color = bandColor;
 
-      if (spotDist < 0.15) {
-        const spotIntensity = 1 - spotDist / 0.15;
-        const swirl = fbm(nx * 3 + spotDist * 10, ny * 3, 3);
+      if (spotDist < 0.18) {
+        const spotIntensity = 1 - spotDist / 0.18;
+        const swirl = fbm(nx * 4 + spotDist * 15, ny * 4, 4);
+        const swirlAngle = Math.atan2(dy, dx) + swirl * 2;
         const spotColor: [number, number, number] = [
-          200 + swirl * 40,
-          80 + swirl * 30,
-          50 + swirl * 20,
+          190 + swirl * 50 + Math.sin(swirlAngle) * 20,
+          70 + swirl * 30,
+          40 + swirl * 20,
         ];
-        color = lerpColor(color, spotColor, spotIntensity * 0.8);
+        color = lerpColor(color, spotColor, spotIntensity * spotIntensity * 0.85);
       }
 
-      const detail = fbm(nx * 2, ny * 30, 3) * 0.1;
-      const r = Math.min(255, color[0] + detail * 30);
-      const g = Math.min(255, color[1] + detail * 20);
-      const b = Math.min(255, color[2] + detail * 10);
+      // Add storm details
+      const stormDetail = fbm(nx * 3, ny * 40, 3) * 0.15;
+      const r = Math.min(255, Math.max(0, color[0] + stormDetail * 40));
+      const g = Math.min(255, Math.max(0, color[1] + stormDetail * 30));
+      const b = Math.min(255, Math.max(0, color[2] + stormDetail * 20));
 
       const idx = (y * size + x) * 4;
       imageData.data[idx] = r;
@@ -366,40 +383,83 @@ export function generateSaturnTexture(): THREE.CanvasTexture {
 }
 
 export function generateSaturnRingTexture(): THREE.CanvasTexture {
-  const size = 512;
+  const size = 1024;
   const canvas = document.createElement('canvas');
   canvas.width = size;
-  canvas.height = 64;
+  canvas.height = 128;
   const ctx = canvas.getContext('2d')!;
-  const imageData = ctx.createImageData(size, 64);
+  const imageData = ctx.createImageData(size, 128);
 
   for (let x = 0; x < size; x++) {
     const t = x / size;
-    const n = fbm(t * 30, 0, 4);
+    
+    // Multiple noise layers for realistic ring structure
+    const n1 = fbm(t * 40, 0, 5);
+    const n2 = fbm(t * 80 + 100, 0, 4);
+    const n3 = fbm(t * 120 + 200, 0, 3);
+    
+    // Ring structure with multiple bands
+    let alpha = 0.0;
+    let brightness = 0.0;
+    
+    // A Ring (outer)
+    if (t > 0.65 && t < 0.85) {
+      const ringPos = (t - 0.65) / 0.2;
+      alpha = 0.7 + n1 * 0.2;
+      brightness = 0.7 + n1 * 0.3;
+      // Encke Gap
+      if (t > 0.78 && t < 0.79) alpha *= 0.1;
+    }
+    
+    // B Ring (brightest)
+    if (t > 0.45 && t < 0.65) {
+      const ringPos = (t - 0.45) / 0.2;
+      alpha = 0.9 + n2 * 0.1;
+      brightness = 0.85 + n2 * 0.15;
+    }
+    
+    // Cassini Division (gap)
+    if (t > 0.42 && t < 0.45) {
+      alpha = 0.05 + n3 * 0.05;
+      brightness = 0.3;
+    }
+    
+    // C Ring (inner, faint)
+    if (t > 0.25 && t < 0.42) {
+      const ringPos = (t - 0.25) / 0.17;
+      alpha = 0.3 + n3 * 0.2;
+      brightness = 0.5 + n3 * 0.2;
+    }
+    
+    // D Ring (innermost, very faint)
+    if (t > 0.15 && t < 0.25) {
+      alpha = 0.1 + n1 * 0.1;
+      brightness = 0.3 + n1 * 0.1;
+    }
+    
+    // Fade at edges
+    if (t < 0.15) alpha *= t / 0.15;
+    if (t > 0.85) alpha *= (1 - t) / 0.15;
+    
+    // Color variation
+    const colorVar = n2 * 0.1;
+    const r = (220 + colorVar * 30) * brightness;
+    const g = (200 + colorVar * 20) * brightness;
+    const b = (160 + colorVar * 10) * brightness;
 
-    // Ring gaps
-    let alpha = 0.8;
-    if (t > 0.45 && t < 0.52) alpha *= 0.2; // Cassini Division
-    if (t > 0.7 && t < 0.73) alpha *= 0.3;
-    if (t < 0.1 || t > 0.95) alpha *= 0.3;
-
-    const brightness = 0.6 + n * 0.4;
-    const r = 210 * brightness;
-    const g = 190 * brightness;
-    const b = 150 * brightness;
-
-    for (let y = 0; y < 64; y++) {
+    for (let y = 0; y < 128; y++) {
       const idx = (y * size + x) * 4;
-      imageData.data[idx] = r;
-      imageData.data[idx + 1] = g;
-      imageData.data[idx + 2] = b;
-      imageData.data[idx + 3] = alpha * 255;
+      imageData.data[idx] = Math.min(255, r);
+      imageData.data[idx + 1] = Math.min(255, g);
+      imageData.data[idx + 2] = Math.min(255, b);
+      imageData.data[idx + 3] = Math.min(255, alpha * 255);
     }
   }
 
   ctx.putImageData(imageData, 0, 0);
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping;
+  texture.anisotropy = 8;
   return texture;
 }
 
@@ -504,6 +564,33 @@ export function generateNebulaTexture(): THREE.CanvasTexture {
       imageData.data[idx + 1] = Math.min(255, g);
       imageData.data[idx + 2] = Math.min(255, b);
       imageData.data[idx + 3] = Math.min(255, a);
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return new THREE.CanvasTexture(canvas);
+}
+
+// Generate bump map for surface details
+export function generateBumpMap(size: number, scale: number, octaves: number): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  const imageData = ctx.createImageData(size, size);
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const nx = x / size * scale;
+      const ny = y / size * scale;
+      const n = fbm(nx, ny, octaves);
+      const value = Math.floor(n * 255);
+
+      const idx = (y * size + x) * 4;
+      imageData.data[idx] = value;
+      imageData.data[idx + 1] = value;
+      imageData.data[idx + 2] = value;
+      imageData.data[idx + 3] = 255;
     }
   }
 

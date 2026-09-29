@@ -78,26 +78,35 @@ export const sunCoronaFragmentShader = `
   }
 
   void main() {
-    float noise1 = snoise(vPosition * 2.0 + uTime * 0.3);
-    float noise2 = snoise(vPosition * 4.0 - uTime * 0.5);
-    float noise3 = snoise(vPosition * 8.0 + uTime * 0.7);
+    // Multi-layered corona with solar flares
+    float noise1 = snoise(vPosition * 2.0 + uTime * 0.2);
+    float noise2 = snoise(vPosition * 4.0 - uTime * 0.4);
+    float noise3 = snoise(vPosition * 8.0 + uTime * 0.6);
+    float noise4 = snoise(vPosition * 16.0 - uTime * 0.8);
     
-    float corona = noise1 * 0.5 + noise2 * 0.3 + noise3 * 0.2;
+    // Solar flare effect
+    float flare = pow(max(0.0, noise4), 3.0) * 2.0;
+    
+    float corona = noise1 * 0.4 + noise2 * 0.3 + noise3 * 0.2 + flare * 0.1;
     corona = corona * 0.5 + 0.5;
     
-    // Fresnel effect for edge glow
-    float fresnel = pow(1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.0);
+    // Enhanced Fresnel effect
+    float fresnel = pow(1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.5);
     
-    vec3 color1 = vec3(1.0, 0.6, 0.1);
-    vec3 color2 = vec3(1.0, 0.3, 0.0);
-    vec3 color3 = vec3(1.0, 0.9, 0.3);
+    // More realistic color gradient
+    vec3 innerColor = vec3(1.0, 0.95, 0.6);   // Bright yellow-white
+    vec3 midColor = vec3(1.0, 0.6, 0.1);      // Orange
+    vec3 outerColor = vec3(1.0, 0.2, 0.0);    // Deep red
+    vec3 flareColor = vec3(1.0, 0.8, 0.3);    // Bright flare
     
-    vec3 finalColor = mix(color1, color2, corona);
-    finalColor = mix(finalColor, color3, fresnel * 0.5);
+    vec3 finalColor = mix(innerColor, midColor, corona);
+    finalColor = mix(finalColor, outerColor, fresnel * 0.7);
+    finalColor = mix(finalColor, flareColor, flare * 0.5);
     
-    float alpha = (corona * 0.6 + fresnel * 0.4) * 0.7;
+    // Intensity based on distance from center
+    float intensity = (corona * 0.7 + fresnel * 0.3 + flare * 0.4) * 0.8;
     
-    gl_FragColor = vec4(finalColor, alpha);
+    gl_FragColor = vec4(finalColor * intensity, intensity);
   }
 `;
 

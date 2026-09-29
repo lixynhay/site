@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import {
   generateSunTexture,
   generateMercuryTexture,
@@ -13,6 +16,7 @@ import {
   generateUranusTexture,
   generateNeptuneTexture,
   generateNebulaTexture,
+  generateBumpMap,
 } from './textures';
 import {
   sunCoronaVertexShader,
@@ -108,6 +112,7 @@ function App() {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const composerRef = useRef<EffectComposer | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
   const planetMeshesRef = useRef<THREE.Group[]>([]);
   const anglesRef = useRef<number[]>(planets.map(() => Math.random() * Math.PI * 2));
@@ -157,14 +162,34 @@ function App() {
     camera.position.set(0, 35, 70);
     cameraRef.current = camera;
 
-    // Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+    // Renderer with enhanced settings
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true, 
+      alpha: false, 
+      powerPreference: 'high-performance',
+      stencil: false,
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.0;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     containerRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
+
+    // Post-processing - Bloom effect
+    const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      0.8,  // strength
+      0.4,  // radius
+      0.85  // threshold
+    );
+    composer.addPass(bloomPass);
+    composerRef.current = composer;
 
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -205,6 +230,7 @@ function App() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener('resize', handleResize);
 
@@ -220,12 +246,13 @@ function App() {
   }, []);
 
   const createStarfield = (scene: THREE.Scene) => {
-    // Layered starfield for depth
+    // Realistic starfield with multiple layers and star types
     const layers = [
-      { count: 3000, size: 0.3, spread: 500, color: 0xffffff },
-      { count: 2000, size: 0.5, spread: 400, color: 0xffeedd },
-      { count: 500, size: 0.8, spread: 300, color: 0xaaccff },
-      { count: 200, size: 1.2, spread: 350, color: 0xffddaa },
+      { count: 4000, size: 0.2, spread: 600, color: 0xffffff, type: 'distant' },
+      { count: 2500, size: 0.4, spread: 500, color: 0xffeedd, type: 'warm' },
+      { count: 800, size: 0.6, spread: 400, color: 0xaaccff, type: 'blue' },
+      { count: 300, size: 0.9, spread: 450, color: 0xffddaa, type: 'bright' },
+      { count: 50, size: 1.5, spread: 350, color: 0xffffee, type: 'giant' },
     ];
 
     layers.forEach(layer => {
@@ -239,29 +266,30 @@ function App() {
       for (let i = 0; i < layer.count; i++) {
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
-        const r = layer.spread + Math.random() * 100;
+        const r = layer.spread + Math.random() * 150;
 
         positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
         positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
         positions[i * 3 + 2] = r * Math.cos(phi);
 
-        const variation = 0.8 + Math.random() * 0.4;
-        colors[i * 3] = baseColor.r * variation;
-        colors[i * 3 + 1] = baseColor.g * variation;
-        colors[i * 3 + 2] = baseColor.b * variation;
+        // Color variation based on star type
+        const variation = 0.7 + Math.random() * 0.5;
+        const tempShift = (Math.random() - 0.5) * 0.2;
+        colors[i * 3] = Math.min(1, baseColor.r * variation + tempShift);
+        colors[i * 3 + 1] = Math.min(1, baseColor.g * variation);
+        colors[i * 3 + 2] = Math.min(1, baseColor.b * variation - tempShift);
 
-        sizes[i] = layer.size * (0.5 + Math.random());
+        sizes[i] = layer.size * (0.4 + Math.random() * 0.8);
       }
 
       geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-      geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
       const material = new THREE.PointsMaterial({
         size: layer.size,
         vertexColors: true,
         transparent: true,
-        opacity: 0.9,
+        opacity: layer.type === 'giant' ? 1.0 : 0.85,
         sizeAttenuation: true,
         blending: THREE.AdditiveBlending,
       });
@@ -269,6 +297,43 @@ function App() {
       const stars = new THREE.Points(geometry, material);
       scene.add(stars);
     });
+
+    // Add Milky Way band
+    const milkyWayGeometry = new THREE.BufferGeometry();
+    const mwCount = 8000;
+    const mwPositions = new Float32Array(mwCount * 3);
+    const mwColors = new Float32Array(mwCount * 3);
+
+    for (let i = 0; i < mwCount; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const spread = (Math.random() - 0.5) * 0.3;
+      const r = 500 + Math.random() * 100;
+      
+      mwPositions[i * 3] = r * Math.cos(angle);
+      mwPositions[i * 3 + 1] = r * spread * 0.2;
+      mwPositions[i * 3 + 2] = r * Math.sin(angle);
+
+      const brightness = 0.3 + Math.random() * 0.4;
+      mwColors[i * 3] = brightness * 0.8;
+      mwColors[i * 3 + 1] = brightness * 0.85;
+      mwColors[i * 3 + 2] = brightness;
+    }
+
+    milkyWayGeometry.setAttribute('position', new THREE.BufferAttribute(mwPositions, 3));
+    milkyWayGeometry.setAttribute('color', new THREE.BufferAttribute(mwColors, 3));
+
+    const milkyWayMaterial = new THREE.PointsMaterial({
+      size: 0.3,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.4,
+      sizeAttenuation: true,
+      blending: THREE.AdditiveBlending,
+    });
+
+    const milkyWay = new THREE.Points(milkyWayGeometry, milkyWayMaterial);
+    milkyWay.rotation.x = Math.PI * 0.3;
+    scene.add(milkyWay);
   };
 
   const createNebulae = (scene: THREE.Scene) => {
@@ -302,8 +367,8 @@ function App() {
   const createSun = (scene: THREE.Scene) => {
     const sunTexture = generateSunTexture();
 
-    // Sun surface with custom shader
-    const sunGeometry = new THREE.SphereGeometry(3.5, 64, 64);
+    // Sun surface with custom shader - higher detail
+    const sunGeometry = new THREE.SphereGeometry(3.5, 96, 96);
     const sunMaterial = new THREE.ShaderMaterial({
       vertexShader: sunSurfaceVertexShader,
       fragmentShader: sunSurfaceFragmentShader,
@@ -316,9 +381,16 @@ function App() {
     scene.add(sun);
     sunMaterialRef.current = sunMaterial;
 
-    // Corona layers
-    for (let i = 0; i < 3; i++) {
-      const coronaGeometry = new THREE.SphereGeometry(4 + i * 0.8, 32, 32);
+    // Multiple corona layers for realistic effect
+    const coronaLayers = [
+      { radius: 4.2, opacity: 0.7 },
+      { radius: 5.0, opacity: 0.5 },
+      { radius: 6.0, opacity: 0.3 },
+      { radius: 7.5, opacity: 0.15 },
+    ];
+
+    coronaLayers.forEach((layer, i) => {
+      const coronaGeometry = new THREE.SphereGeometry(layer.radius, 64, 64);
       const coronaMaterial = new THREE.ShaderMaterial({
         vertexShader: sunCoronaVertexShader,
         fragmentShader: sunCoronaFragmentShader,
@@ -333,31 +405,44 @@ function App() {
       const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
       scene.add(corona);
       if (i === 0) sunCoronaRef.current = corona;
-    }
-
-    // Sun glow sprite
-    const glowCanvas = document.createElement('canvas');
-    glowCanvas.width = 256;
-    glowCanvas.height = 256;
-    const glowCtx = glowCanvas.getContext('2d')!;
-    const gradient = glowCtx.createRadialGradient(128, 128, 0, 128, 128, 128);
-    gradient.addColorStop(0, 'rgba(255, 200, 50, 0.8)');
-    gradient.addColorStop(0.2, 'rgba(255, 150, 0, 0.4)');
-    gradient.addColorStop(0.5, 'rgba(255, 100, 0, 0.1)');
-    gradient.addColorStop(1, 'rgba(255, 50, 0, 0)');
-    glowCtx.fillStyle = gradient;
-    glowCtx.fillRect(0, 0, 256, 256);
-
-    const glowTexture = new THREE.CanvasTexture(glowCanvas);
-    const glowMaterial = new THREE.SpriteMaterial({
-      map: glowTexture,
-      transparent: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
     });
-    const glowSprite = new THREE.Sprite(glowMaterial);
-    glowSprite.scale.set(25, 25, 1);
-    scene.add(glowSprite);
+
+    // Enhanced sun glow with multiple layers
+    const glowSizes = [
+      { size: 20, opacity: 0.6 },
+      { size: 30, opacity: 0.3 },
+      { size: 45, opacity: 0.15 },
+    ];
+
+    glowSizes.forEach(glowConfig => {
+      const glowCanvas = document.createElement('canvas');
+      glowCanvas.width = 512;
+      glowCanvas.height = 512;
+      const glowCtx = glowCanvas.getContext('2d')!;
+      
+      // Multi-stop gradient for realistic glow
+      const gradient = glowCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
+      gradient.addColorStop(0, `rgba(255, 240, 200, ${glowConfig.opacity})`);
+      gradient.addColorStop(0.1, `rgba(255, 200, 100, ${glowConfig.opacity * 0.8})`);
+      gradient.addColorStop(0.3, `rgba(255, 150, 50, ${glowConfig.opacity * 0.5})`);
+      gradient.addColorStop(0.5, `rgba(255, 100, 20, ${glowConfig.opacity * 0.25})`);
+      gradient.addColorStop(0.7, `rgba(255, 50, 0, ${glowConfig.opacity * 0.1})`);
+      gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+      
+      glowCtx.fillStyle = gradient;
+      glowCtx.fillRect(0, 0, 512, 512);
+
+      const glowTexture = new THREE.CanvasTexture(glowCanvas);
+      const glowMaterial = new THREE.SpriteMaterial({
+        map: glowTexture,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const glowSprite = new THREE.Sprite(glowMaterial);
+      glowSprite.scale.set(glowConfig.size, glowConfig.size, 1);
+      scene.add(glowSprite);
+    });
   };
 
   const createAsteroidBelt = (scene: THREE.Scene) => {
@@ -415,19 +500,40 @@ function App() {
       generateNeptuneTexture,
     ];
 
+    // Bump map configurations for each planet
+    const bumpConfigs = [
+      { scale: 12, octaves: 5, strength: 0.3 },  // Mercury - cratered
+      { scale: 8, octaves: 4, strength: 0.1 },   // Venus - smooth
+      { scale: 10, octaves: 5, strength: 0.2 },  // Earth
+      { scale: 10, octaves: 5, strength: 0.25 }, // Mars
+      { scale: 15, octaves: 3, strength: 0.05 }, // Jupiter - gas giant
+      { scale: 15, octaves: 3, strength: 0.05 }, // Saturn - gas giant
+      { scale: 12, octaves: 3, strength: 0.05 }, // Uranus - gas giant
+      { scale: 12, octaves: 3, strength: 0.05 }, // Neptune - gas giant
+    ];
+
     planets.forEach((planetData, index) => {
       const group = new THREE.Group();
 
-      // Planet mesh
-      const geometry = new THREE.SphereGeometry(planetData.radius, 48, 48);
+      // Planet mesh with higher detail
+      const geometry = new THREE.SphereGeometry(planetData.radius, 64, 64);
       const texture = textureGenerators[index]();
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
+      texture.anisotropy = 8;
+
+      // Generate bump map
+      const bumpConfig = bumpConfigs[index];
+      const bumpMap = generateBumpMap(512, bumpConfig.scale, bumpConfig.octaves);
+      bumpMap.wrapS = THREE.RepeatWrapping;
+      bumpMap.wrapT = THREE.RepeatWrapping;
 
       const material = new THREE.MeshStandardMaterial({
         map: texture,
-        roughness: 0.8,
-        metalness: 0.1,
+        bumpMap: bumpMap,
+        bumpScale: bumpConfig.strength,
+        roughness: planetData.name === 'Venus' ? 0.9 : 0.7,
+        metalness: 0.05,
       });
 
       const planet = new THREE.Mesh(geometry, material);
@@ -587,7 +693,14 @@ function App() {
     });
 
     controlsRef.current?.update();
-    rendererRef.current.render(sceneRef.current, cameraRef.current);
+    
+    // Use composer for post-processing
+    if (composerRef.current) {
+      composerRef.current.render();
+    } else {
+      rendererRef.current!.render(sceneRef.current!, cameraRef.current!);
+    }
+    
     animationRef.current = requestAnimationFrame(animate);
   }, []);
 
