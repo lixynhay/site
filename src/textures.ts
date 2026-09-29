@@ -533,6 +533,59 @@ export function generateNeptuneTexture(): THREE.CanvasTexture {
   return new THREE.CanvasTexture(canvas);
 }
 
+export function generatePlutoTexture(): THREE.CanvasTexture {
+  const size = 512;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  const imageData = ctx.createImageData(size, size);
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const nx = x / size * 8;
+      const ny = y / size * 8;
+      const n = fbm(nx, ny, 5);
+      const detail = fbm(nx * 3, ny * 3, 3);
+
+      // Pluto's heart-shaped feature (Tombaugh Regio)
+      const heartX = 0.5;
+      const heartY = 0.5;
+      const dx = (x / size - heartX) * 2;
+      const dy = (y / size - heartY) * 2;
+      const heartDist = Math.sqrt(dx * dx + dy * dy);
+      
+      let r = 180 + n * 40 + detail * 20;
+      let g = 160 + n * 35 + detail * 15;
+      let b = 140 + n * 30 + detail * 10;
+
+      // Bright heart region
+      if (heartDist < 0.3) {
+        const heartIntensity = 1 - heartDist / 0.3;
+        r += heartIntensity * 40;
+        g += heartIntensity * 35;
+        b += heartIntensity * 30;
+      }
+
+      // Darker regions
+      if (n < 0.4) {
+        r *= 0.7;
+        g *= 0.65;
+        b *= 0.6;
+      }
+
+      const idx = (y * size + x) * 4;
+      imageData.data[idx] = Math.min(255, r);
+      imageData.data[idx + 1] = Math.min(255, g);
+      imageData.data[idx + 2] = Math.min(255, b);
+      imageData.data[idx + 3] = 255;
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return new THREE.CanvasTexture(canvas);
+}
+
 export function generateNebulaTexture(): THREE.CanvasTexture {
   const size = 1024;
   const canvas = document.createElement('canvas');

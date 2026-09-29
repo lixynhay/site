@@ -15,6 +15,7 @@ import {
   generateSaturnRingTexture,
   generateUranusTexture,
   generateNeptuneTexture,
+  generatePlutoTexture,
   generateNebulaTexture,
   generateBumpMap,
   generateColoredNebulaTexture,
@@ -147,6 +148,16 @@ const planets: PlanetData[] = [
       { name: 'Тритон', radius: 0.25, distance: 4.5, speed: 1.8, color: '#aaccdd' }
     ]
   },
+  {
+    name: 'Pluto', nameRu: 'Плутон', radius: 0.35, distance: 130,
+    realDiameter: 2376, realDistance: 5906, orbitalPeriod: 90560, speed: 0.004,
+    rotationSpeed: 0.01, tilt: 2.08, orbitalTilt: 0.3, hasAtmosphere: false, atmosphereColor: '#ccaa88',
+    description: 'Карликовая планета в поясе Койпера. Имеет ледяную поверхность и тонкую атмосферу из азота. Самый большой спутник — Харон.',
+    temperature: '-230°C', moons: 5, type: 'Карликовая', gravity: '0.62 м/с²', dayLength: '6.4 дня',
+    moonData: [
+      { name: 'Харон', radius: 0.2, distance: 1.5, speed: 1.0, color: '#999999' }
+    ]
+  },
 ];
 
 function App() {
@@ -181,6 +192,8 @@ function App() {
   const freeFlyModeRef = useRef<boolean>(false);
   const keysRef = useRef<Set<string>>(new Set());
   const mouseMovementRef = useRef({ x: 0, y: 0 });
+  const eulerRef = useRef(new THREE.Euler(0, 0, 0, 'YXZ'));
+  const isPointerLockedRef = useRef(false);
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [speed, setSpeed] = useState(1);
@@ -209,22 +222,53 @@ function App() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Keyboard controls for free fly
+  // Keyboard and mouse controls for free fly
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       keysRef.current.add(e.key.toLowerCase());
       if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
-        setFreeFlyMode(prev => !prev);
+        setFreeFlyMode(prev => {
+          const newMode = !prev;
+          if (newMode && rendererRef.current) {
+            // Request pointer lock when entering free fly
+            rendererRef.current.domElement.requestPointerLock();
+          } else {
+            // Exit pointer lock when leaving free fly
+            document.exitPointerLock();
+          }
+          return newMode;
+        });
       }
     };
+    
     const handleKeyUp = (e: KeyboardEvent) => {
       keysRef.current.delete(e.key.toLowerCase());
     };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (freeFlyModeRef.current && isPointerLockedRef.current) {
+        mouseMovementRef.current.x = e.movementX || 0;
+        mouseMovementRef.current.y = e.movementY || 0;
+      }
+    };
+
+    const handlePointerLockChange = () => {
+      isPointerLockedRef.current = document.pointerLockElement === rendererRef.current?.domElement;
+      if (!isPointerLockedRef.current && freeFlyModeRef.current) {
+        setFreeFlyMode(false);
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('pointerlockchange', handlePointerLockChange);
+    
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('pointerlockchange', handlePointerLockChange);
     };
   }, []);
 
@@ -259,7 +303,9 @@ function App() {
 
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.2, 0.6, 0.75
+      1.5,  // strength - increased for more dramatic glow
+      0.8,  // radius - softer glow
+      0.7   // threshold - catch more bright areas
     );
     composer.addPass(bloomPass);
     composerRef.current = composer;
@@ -274,12 +320,18 @@ function App() {
     controls.zoomSpeed = 0.8;
     controlsRef.current = controls;
 
-    const ambientLight = new THREE.AmbientLight(0x111122, 0.4);
+    const ambientLight = new THREE.AmbientLight(0x111122, 0.5);
     scene.add(ambientLight);
 
-    const sunLight = new THREE.PointLight(0xfff5e0, 4, 500, 0.5);
+    const sunLight = new THREE.PointLight(0xfff5e0, 5, 600, 0.4);
     sunLight.position.set(0, 0, 0);
+    sunLight.castShadow = false;
     scene.add(sunLight);
+
+    // Additional fill light for better visibility
+    const fillLight = new THREE.DirectionalLight(0x4466aa, 0.3);
+    fillLight.position.set(50, 30, 50);
+    scene.add(fillLight);
 
     createStarfield(scene);
     createNebulae(scene);
@@ -308,46 +360,60 @@ function App() {
   }, []);
 
   const createStarfield = (scene: THREE.Scene) => {
-    const layers = [
-      { count: 15000, size: 0.15, spread: 3000, color: 0xffffff, type: 'distant' },
-      { count: 8000, size: 0.25, spread: 2500, color: 0xffeedd, type: 'warm' },
-      { count: 4000, size: 0.4, spread: 2000, color: 0xaaccff, type: 'blue' },
-      { count: 1500, size: 0.6, spread: 1800, color: 0xffddaa, type: 'bright' },
-      { count: 500, size: 1.0, spread: 1500, color: 0xffffee, type: 'giant' },
-      { count: 100, size: 2.0, spread: 1200, color: 0xffffff, type: 'supergiant' },
+    // Diverse star types with realistic colors and sizes
+    const starTypes = [
+      // Red dwarfs (most common)
+      { count: 12000, size: 0.12, spread: 3000, color: 0xff6644, type: 'red dwarf' },
+      // Orange dwarfs
+      { count: 8000, size: 0.18, spread: 2800, color: 0xffaa66, type: 'orange dwarf' },
+      // Yellow stars (like Sun)
+      { count: 6000, size: 0.25, spread: 2500, color: 0xffee88, type: 'yellow' },
+      // White stars
+      { count: 4000, size: 0.35, spread: 2200, color: 0xffffff, type: 'white' },
+      // Blue-white stars
+      { count: 2500, size: 0.45, spread: 2000, color: 0xaaccff, type: 'blue-white' },
+      // Blue giants
+      { count: 800, size: 0.7, spread: 1800, color: 0x6688ff, type: 'blue giant' },
+      // Red giants
+      { count: 600, size: 0.9, spread: 1700, color: 0xff4422, type: 'red giant' },
+      // Supergiants
+      { count: 200, size: 1.5, spread: 1500, color: 0xffffcc, type: 'supergiant' },
+      // Neutron stars (pulsars)
+      { count: 50, size: 0.3, spread: 1400, color: 0x88ffff, type: 'neutron' },
+      // White dwarfs
+      { count: 150, size: 0.2, spread: 1600, color: 0xeeeeff, type: 'white dwarf' },
     ];
 
-    layers.forEach(layer => {
+    starTypes.forEach(starType => {
       const geometry = new THREE.BufferGeometry();
-      const positions = new Float32Array(layer.count * 3);
-      const colors = new Float32Array(layer.count * 3);
+      const positions = new Float32Array(starType.count * 3);
+      const colors = new Float32Array(starType.count * 3);
 
-      const baseColor = new THREE.Color(layer.color);
+      const baseColor = new THREE.Color(starType.color);
 
-      for (let i = 0; i < layer.count; i++) {
+      for (let i = 0; i < starType.count; i++) {
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
-        const r = layer.spread + Math.random() * 500;
+        const r = starType.spread + Math.random() * 500;
 
         positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
         positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
         positions[i * 3 + 2] = r * Math.cos(phi);
 
-        const variation = 0.7 + Math.random() * 0.5;
-        const tempShift = (Math.random() - 0.5) * 0.2;
-        colors[i * 3] = Math.min(1, baseColor.r * variation + tempShift);
+        const variation = 0.8 + Math.random() * 0.4;
+        colors[i * 3] = Math.min(1, baseColor.r * variation);
         colors[i * 3 + 1] = Math.min(1, baseColor.g * variation);
-        colors[i * 3 + 2] = Math.min(1, baseColor.b * variation - tempShift);
+        colors[i * 3 + 2] = Math.min(1, baseColor.b * variation);
       }
 
       geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
       const material = new THREE.PointsMaterial({
-        size: layer.size,
+        size: starType.size,
         vertexColors: true,
         transparent: true,
-        opacity: layer.type === 'supergiant' ? 1.0 : layer.type === 'giant' ? 0.95 : 0.85,
+        opacity: starType.type === 'neutron' ? 1.0 : 0.9,
         sizeAttenuation: true,
         blending: THREE.AdditiveBlending,
       });
@@ -356,33 +422,50 @@ function App() {
       scene.add(stars);
     });
 
+    // Enhanced Milky Way with spiral structure
     const milkyWayGeometry = new THREE.BufferGeometry();
-    const mwCount = 25000;
+    const mwCount = 35000;
     const mwPositions = new Float32Array(mwCount * 3);
     const mwColors = new Float32Array(mwCount * 3);
 
     for (let i = 0; i < mwCount; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const spread = (Math.random() - 0.5) * 0.4;
-      const r = 2000 + Math.random() * 800;
+      const armOffset = Math.sin(angle * 2) * 0.3; // Spiral arms
+      const spread = (Math.random() - 0.5) * 0.5 + armOffset;
+      const r = 2000 + Math.random() * 1000;
       
       mwPositions[i * 3] = r * Math.cos(angle);
-      mwPositions[i * 3 + 1] = r * spread * 0.15;
+      mwPositions[i * 3 + 1] = r * spread * 0.12;
       mwPositions[i * 3 + 2] = r * Math.sin(angle);
 
-      const brightness = 0.3 + Math.random() * 0.5;
+      const brightness = 0.3 + Math.random() * 0.6;
       const hue = Math.random();
-      if (hue < 0.3) {
-        mwColors[i * 3] = brightness * 0.7;
-        mwColors[i * 3 + 1] = brightness * 0.8;
+      
+      // More diverse star colors in Milky Way
+      if (hue < 0.2) {
+        // Blue young stars
+        mwColors[i * 3] = brightness * 0.6;
+        mwColors[i * 3 + 1] = brightness * 0.7;
+        mwColors[i * 3 + 2] = brightness;
+      } else if (hue < 0.4) {
+        // White stars
+        mwColors[i * 3] = brightness * 0.95;
+        mwColors[i * 3 + 1] = brightness * 0.95;
         mwColors[i * 3 + 2] = brightness;
       } else if (hue < 0.6) {
-        mwColors[i * 3] = brightness * 0.9;
-        mwColors[i * 3 + 1] = brightness * 0.85;
-        mwColors[i * 3 + 2] = brightness * 0.7;
-      } else {
+        // Yellow stars
         mwColors[i * 3] = brightness;
-        mwColors[i * 3 + 1] = brightness * 0.6;
+        mwColors[i * 3 + 1] = brightness * 0.9;
+        mwColors[i * 3 + 2] = brightness * 0.7;
+      } else if (hue < 0.8) {
+        // Orange stars
+        mwColors[i * 3] = brightness;
+        mwColors[i * 3 + 1] = brightness * 0.7;
+        mwColors[i * 3 + 2] = brightness * 0.5;
+      } else {
+        // Red old stars
+        mwColors[i * 3] = brightness;
+        mwColors[i * 3 + 1] = brightness * 0.5;
         mwColors[i * 3 + 2] = brightness * 0.4;
       }
     }
@@ -391,10 +474,10 @@ function App() {
     milkyWayGeometry.setAttribute('color', new THREE.BufferAttribute(mwColors, 3));
 
     const milkyWayMaterial = new THREE.PointsMaterial({
-      size: 0.4,
+      size: 0.35,
       vertexColors: true,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.55,
       sizeAttenuation: true,
       blending: THREE.AdditiveBlending,
     });
@@ -458,24 +541,43 @@ function App() {
       }
     });
 
-    for (let i = 0; i < 25; i++) {
+    // Diverse galaxy types
+    for (let i = 0; i < 35; i++) {
       const galaxyTexture = generateGalaxyTexture();
-      const size = 500 + Math.random() * 700;
+      const size = 400 + Math.random() * 900;
       const geometry = new THREE.PlaneGeometry(size, size);
+      
+      // Vary opacity and color for different galaxy types
+      const galaxyType = Math.random();
+      let opacity = 0.2 + Math.random() * 0.2;
+      let colorMultiplier = 1.0;
+      
+      if (galaxyType < 0.4) {
+        // Spiral galaxies
+        opacity = 0.25 + Math.random() * 0.15;
+      } else if (galaxyType < 0.7) {
+        // Elliptical galaxies (redder)
+        colorMultiplier = 0.8;
+      } else {
+        // Irregular galaxies (smaller, fainter)
+        opacity = 0.15 + Math.random() * 0.1;
+      }
+      
       const material = new THREE.MeshBasicMaterial({
         map: galaxyTexture,
         transparent: true,
-        opacity: 0.25 + Math.random() * 0.15,
+        opacity: opacity,
         blending: THREE.AdditiveBlending,
         side: THREE.DoubleSide,
         depthWrite: false,
+        color: new THREE.Color(colorMultiplier, colorMultiplier * 0.95, colorMultiplier * 0.9),
       });
       
       const galaxy = new THREE.Mesh(geometry, material);
       
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
-      const dist = 4000 + Math.random() * 2000;
+      const dist = 3500 + Math.random() * 2500;
       
       galaxy.position.set(
         dist * Math.sin(phi) * Math.cos(theta),
@@ -487,6 +589,44 @@ function App() {
       galaxy.rotation.z = Math.random() * Math.PI * 2;
       
       scene.add(galaxy);
+    }
+
+    // Quasars - extremely bright active galactic nuclei
+    for (let i = 0; i < 8; i++) {
+      const quasarGeometry = new THREE.SphereGeometry(15 + Math.random() * 20, 16, 16);
+      const quasarMaterial = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(0.8 + Math.random() * 0.2, 0.6 + Math.random() * 0.3, 1.0),
+        transparent: true,
+        opacity: 0.7,
+        blending: THREE.AdditiveBlending,
+      });
+      const quasar = new THREE.Mesh(quasarGeometry, quasarMaterial);
+      
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const dist = 4500 + Math.random() * 1500;
+      
+      quasar.position.set(
+        dist * Math.sin(phi) * Math.cos(theta),
+        dist * Math.sin(phi) * Math.sin(theta),
+        dist * Math.cos(phi)
+      );
+      
+      scene.add(quasar);
+      
+      // Quasar jets
+      const jetGeometry = new THREE.CylinderGeometry(2, 8, 200, 8);
+      const jetMaterial = new THREE.MeshBasicMaterial({
+        color: 0x88aaff,
+        transparent: true,
+        opacity: 0.3,
+        blending: THREE.AdditiveBlending,
+      });
+      const jet = new THREE.Mesh(jetGeometry, jetMaterial);
+      jet.position.copy(quasar.position);
+      jet.rotation.x = Math.random() * Math.PI;
+      jet.rotation.z = Math.random() * Math.PI;
+      scene.add(jet);
     }
 
     for (let i = 0; i < 30; i++) {
@@ -700,6 +840,7 @@ function App() {
       generateSaturnTexture,
       generateUranusTexture,
       generateNeptuneTexture,
+      generatePlutoTexture,
     ];
 
     // NASA texture URLs (public domain)
@@ -854,28 +995,65 @@ function App() {
         atmosphereMaterialsRef.current.push(atmosMaterial);
       }
 
-      // Saturn's rings
+      // Saturn's rings - particle-based
       if (planetData.name === 'Saturn') {
-        const ringTexture = generateSaturnRingTexture();
-        const ringGeometry = new THREE.RingGeometry(planetData.radius * 1.4, planetData.radius * 2.8, 128);
-        const pos = ringGeometry.attributes.position;
-        const uv = ringGeometry.attributes.uv;
-        for (let i = 0; i < pos.count; i++) {
-          const x = pos.getX(i);
-          const z = pos.getZ(i);
-          const dist = Math.sqrt(x * x + z * z);
-          const normalizedDist = (dist - planetData.radius * 1.4) / (planetData.radius * 1.4);
-          uv.setXY(i, normalizedDist, 0.5);
+        const ringParticleCount = 15000;
+        const ringGeometry = new THREE.BufferGeometry();
+        const ringPositions = new Float32Array(ringParticleCount * 3);
+        const ringColors = new Float32Array(ringParticleCount * 3);
+        const ringSizes = new Float32Array(ringParticleCount);
+
+        const innerRadius = planetData.radius * 1.4;
+        const outerRadius = planetData.radius * 2.8;
+        const cassiniDivision = planetData.radius * 2.1; // Gap in rings
+
+        for (let i = 0; i < ringParticleCount; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          let radius = innerRadius + Math.random() * (outerRadius - innerRadius);
+          
+          // Create Cassini Division gap
+          if (Math.abs(radius - cassiniDivision) < planetData.radius * 0.1) {
+            radius += (Math.random() > 0.5 ? 1 : -1) * planetData.radius * 0.15;
+          }
+
+          const height = (Math.random() - 0.5) * 0.15; // Very thin rings
+
+          ringPositions[i * 3] = Math.cos(angle) * radius;
+          ringPositions[i * 3 + 1] = height;
+          ringPositions[i * 3 + 2] = Math.sin(angle) * radius;
+
+          // Color variation - ice and rock particles
+          const brightness = 0.6 + Math.random() * 0.4;
+          const isIce = Math.random() > 0.3;
+          if (isIce) {
+            ringColors[i * 3] = brightness * 0.95;
+            ringColors[i * 3 + 1] = brightness * 0.92;
+            ringColors[i * 3 + 2] = brightness * 0.88;
+          } else {
+            ringColors[i * 3] = brightness * 0.75;
+            ringColors[i * 3 + 1] = brightness * 0.68;
+            ringColors[i * 3 + 2] = brightness * 0.55;
+          }
+
+          // Size variation
+          ringSizes[i] = 0.02 + Math.random() * 0.08;
         }
 
-        const ringMaterial = new THREE.MeshBasicMaterial({
-          map: ringTexture,
-          side: THREE.DoubleSide,
+        ringGeometry.setAttribute('position', new THREE.BufferAttribute(ringPositions, 3));
+        ringGeometry.setAttribute('color', new THREE.BufferAttribute(ringColors, 3));
+        ringGeometry.setAttribute('size', new THREE.BufferAttribute(ringSizes, 1));
+
+        const ringMaterial = new THREE.PointsMaterial({
+          size: 0.05,
+          vertexColors: true,
           transparent: true,
           opacity: 0.85,
+          sizeAttenuation: true,
+          blending: THREE.NormalBlending,
           depthWrite: false,
         });
-        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+
+        const ring = new THREE.Points(ringGeometry, ringMaterial);
         ring.rotation.x = Math.PI / 2 + 0.47;
         group.add(ring);
       }
@@ -1048,30 +1226,41 @@ function App() {
 
     // Free fly mode
     if (freeFlyModeRef.current && cameraRef.current) {
-      const moveSpeed = 0.5;
-      const direction = new THREE.Vector3();
-      cameraRef.current.getWorldDirection(direction);
+      const moveSpeed = keysRef.current.has('shift') ? 2.0 : 0.8;
       
-      const right = new THREE.Vector3();
-      right.crossVectors(direction, cameraRef.current.up).normalize();
+      // Handle mouse look
+      if (isPointerLockedRef.current) {
+        const sensitivity = 0.002;
+        eulerRef.current.setFromQuaternion(cameraRef.current.quaternion);
+        eulerRef.current.y -= mouseMovementRef.current.x * sensitivity;
+        eulerRef.current.x -= mouseMovementRef.current.y * sensitivity;
+        eulerRef.current.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, eulerRef.current.x));
+        cameraRef.current.quaternion.setFromEuler(eulerRef.current);
+        mouseMovementRef.current.x = 0;
+        mouseMovementRef.current.y = 0;
+      }
 
-      if (keysRef.current.has('w')) {
-        cameraRef.current.position.add(direction.multiplyScalar(moveSpeed));
-      }
-      if (keysRef.current.has('s')) {
-        cameraRef.current.position.add(direction.multiplyScalar(-moveSpeed));
-      }
-      if (keysRef.current.has('a')) {
-        cameraRef.current.position.add(right.multiplyScalar(-moveSpeed));
-      }
-      if (keysRef.current.has('d')) {
-        cameraRef.current.position.add(right.multiplyScalar(moveSpeed));
-      }
-      if (keysRef.current.has(' ')) {
-        cameraRef.current.position.y += moveSpeed;
-      }
-      if (keysRef.current.has('shift')) {
-        cameraRef.current.position.y -= moveSpeed;
+      // Get camera directions without modifying them
+      const forward = new THREE.Vector3();
+      const right = new THREE.Vector3();
+      const up = new THREE.Vector3(0, 1, 0);
+      
+      cameraRef.current.getWorldDirection(forward);
+      right.crossVectors(forward, up).normalize();
+
+      // Movement
+      const movement = new THREE.Vector3();
+      
+      if (keysRef.current.has('w')) movement.add(forward);
+      if (keysRef.current.has('s')) movement.sub(forward);
+      if (keysRef.current.has('a')) movement.sub(right);
+      if (keysRef.current.has('d')) movement.add(right);
+      if (keysRef.current.has(' ')) movement.y += 1;
+      if (keysRef.current.has('control')) movement.y -= 1;
+
+      if (movement.length() > 0) {
+        movement.normalize().multiplyScalar(moveSpeed);
+        cameraRef.current.position.add(movement);
       }
 
       controlsRef.current!.enabled = false;
@@ -1288,7 +1477,14 @@ function App() {
             </div>
 
             <button
-              onClick={() => setFreeFlyMode(!freeFlyMode)}
+              onClick={() => {
+                if (!freeFlyMode && rendererRef.current) {
+                  rendererRef.current.domElement.requestPointerLock();
+                } else {
+                  document.exitPointerLock();
+                }
+                setFreeFlyMode(!freeFlyMode);
+              }}
               className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                 freeFlyMode
                   ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-500/40'
@@ -1385,8 +1581,10 @@ function App() {
               движение • 
               <span className="inline-block bg-white/10 px-2 py-0.5 rounded mx-1">Space</span>
               вверх • 
-              <span className="inline-block bg-white/10 px-2 py-0.5 rounded mx-1">Shift</span>
+              <span className="inline-block bg-white/10 px-2 py-0.5 rounded mx-1">Ctrl</span>
               вниз • 
+              <span className="inline-block bg-white/10 px-2 py-0.5 rounded mx-1">Shift</span>
+              ускорение • 
               <span className="inline-block bg-white/10 px-2 py-0.5 rounded mx-1">F</span>
               выход
             </p>
