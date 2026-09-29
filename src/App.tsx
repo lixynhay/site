@@ -17,6 +17,8 @@ import {
   generateNeptuneTexture,
   generateNebulaTexture,
   generateBumpMap,
+  generateColoredNebulaTexture,
+  generateGalaxyTexture,
 } from './textures';
 import {
   sunCoronaVertexShader,
@@ -50,56 +52,56 @@ interface PlanetData {
 
 const planets: PlanetData[] = [
   {
-    name: 'Mercury', nameRu: 'Меркурий', radius: 0.4, distance: 8,
+    name: 'Mercury', nameRu: 'Меркурий', radius: 0.5, distance: 12,
     realDiameter: 4879, realDistance: 57.9, orbitalPeriod: 88, speed: 4.15,
     rotationSpeed: 0.005, tilt: 0.03, hasAtmosphere: false, atmosphereColor: '#b5b5b5',
     description: 'Самая маленькая планета. Поверхность покрыта кратерами, похожа на Луну. Нет атмосферы и спутников.',
     temperature: '-180°C до +430°C', moons: 0, type: 'Скалистая', gravity: '3.7 м/с²', dayLength: '59 дней',
   },
   {
-    name: 'Venus', nameRu: 'Венера', radius: 0.9, distance: 12,
+    name: 'Venus', nameRu: 'Венера', radius: 1.1, distance: 18,
     realDiameter: 12104, realDistance: 108.2, orbitalPeriod: 225, speed: 1.62,
     rotationSpeed: -0.002, tilt: 2.64, hasAtmosphere: true, atmosphereColor: '#e8cda0',
     description: 'Самая горячая планета из-за парникового эффекта. Плотная атмосфера из CO₂ создаёт давление в 90 раз выше земного.',
     temperature: '+462°C', moons: 0, type: 'Скалистая', gravity: '8.87 м/с²', dayLength: '243 дня',
   },
   {
-    name: 'Earth', nameRu: 'Земля', radius: 1, distance: 16,
+    name: 'Earth', nameRu: 'Земля', radius: 1.2, distance: 25,
     realDiameter: 12756, realDistance: 149.6, orbitalPeriod: 365, speed: 1.0,
     rotationSpeed: 0.02, tilt: 0.41, hasAtmosphere: true, atmosphereColor: '#4da6ff',
     description: 'Единственная известная планета с жизнью. 71% поверхности покрыт водой. Магнитное поле защищает от солнечного ветра.',
     temperature: '-89°C до +57°C', moons: 1, type: 'Скалистая', gravity: '9.81 м/с²', dayLength: '24 часа',
   },
   {
-    name: 'Mars', nameRu: 'Марс', radius: 0.6, distance: 21,
+    name: 'Mars', nameRu: 'Марс', radius: 0.8, distance: 33,
     realDiameter: 6792, realDistance: 227.9, orbitalPeriod: 687, speed: 0.53,
     rotationSpeed: 0.018, tilt: 0.44, hasAtmosphere: true, atmosphereColor: '#e85d3a',
     description: 'Красная планета. Здесь находится гора Олимп — высочайший вулкан в Солнечной системе (21.9 км).',
     temperature: '-140°C до +20°C', moons: 2, type: 'Скалистая', gravity: '3.72 м/с²', dayLength: '24.6 часа',
   },
   {
-    name: 'Jupiter', nameRu: 'Юпитер', radius: 2.8, distance: 30,
+    name: 'Jupiter', nameRu: 'Юпитер', radius: 3.5, distance: 50,
     realDiameter: 142984, realDistance: 778.5, orbitalPeriod: 4333, speed: 0.084,
     rotationSpeed: 0.04, tilt: 0.05, hasAtmosphere: true, atmosphereColor: '#e8a952',
     description: 'Крупнейшая планета. Большое Красное Пятно — гигантский шторм, бушующий более 350 лет. Мощнейшее магнитное поле.',
     temperature: '-110°C', moons: 95, type: 'Газовый гигант', gravity: '24.79 м/с²', dayLength: '9.9 часа',
   },
   {
-    name: 'Saturn', nameRu: 'Сатурн', radius: 2.4, distance: 40,
+    name: 'Saturn', nameRu: 'Сатурн', radius: 3.0, distance: 70,
     realDiameter: 120536, realDistance: 1434, orbitalPeriod: 10759, speed: 0.034,
     rotationSpeed: 0.038, tilt: 0.47, hasAtmosphere: true, atmosphereColor: '#f0d68a',
     description: 'Знаменит кольцами из льда и камней шириной 282 000 км, но толщиной всего 10 метров. Плотность меньше воды.',
     temperature: '-178°C', moons: 146, type: 'Газовый гигант', gravity: '10.44 м/с²', dayLength: '10.7 часа',
   },
   {
-    name: 'Uranus', nameRu: 'Уран', radius: 1.6, distance: 50,
+    name: 'Uranus', nameRu: 'Уран', radius: 2.0, distance: 90,
     realDiameter: 51118, realDistance: 2871, orbitalPeriod: 30687, speed: 0.012,
     rotationSpeed: 0.03, tilt: 1.71, hasAtmosphere: true, atmosphereColor: '#7de8e8',
     description: 'Ледяной гигант с уникальным наклоном оси 98° — вращается «лёжа на боку». Атмосфера содержит метан, придающий голубой цвет.',
     temperature: '-224°C', moons: 27, type: 'Ледяной гигант', gravity: '8.87 м/с²', dayLength: '17.2 часа',
   },
   {
-    name: 'Neptune', nameRu: 'Нептун', radius: 1.5, distance: 60,
+    name: 'Neptune', nameRu: 'Нептун', radius: 1.9, distance: 110,
     realDiameter: 49528, realDistance: 4495, orbitalPeriod: 60190, speed: 0.006,
     rotationSpeed: 0.032, tilt: 0.49, hasAtmosphere: true, atmosphereColor: '#4166f5',
     description: 'Самая далёкая планета. Здесь дуют самые быстрые ветры в Солнечной системе — до 2100 км/ч. Открыт математически.',
@@ -154,12 +156,12 @@ function App() {
 
     // Scene
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x000011, 0.002);
+    scene.fog = new THREE.FogExp2(0x000005, 0.00015);
     sceneRef.current = scene;
 
     // Camera
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(0, 35, 70);
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000);
+    camera.position.set(0, 60, 140);
     cameraRef.current = camera;
 
     // Renderer with enhanced settings
@@ -184,9 +186,9 @@ function App() {
 
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.8,  // strength
-      0.4,  // radius
-      0.85  // threshold
+      1.2,  // strength - increased for more dramatic glow
+      0.6,  // radius - increased for softer glow
+      0.75  // threshold - lowered to catch more bright areas
     );
     composer.addPass(bloomPass);
     composerRef.current = composer;
@@ -195,8 +197,8 @@ function App() {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.minDistance = 5;
-    controls.maxDistance = 250;
+    controls.minDistance = 10;
+    controls.maxDistance = 500;
     controls.maxPolarAngle = Math.PI * 0.85;
     controls.rotateSpeed = 0.5;
     controls.zoomSpeed = 0.8;
@@ -206,7 +208,7 @@ function App() {
     const ambientLight = new THREE.AmbientLight(0x111122, 0.4);
     scene.add(ambientLight);
 
-    const sunLight = new THREE.PointLight(0xfff5e0, 3, 300, 0.5);
+    const sunLight = new THREE.PointLight(0xfff5e0, 4, 500, 0.5);
     sunLight.position.set(0, 0, 0);
     scene.add(sunLight);
 
@@ -246,27 +248,27 @@ function App() {
   }, []);
 
   const createStarfield = (scene: THREE.Scene) => {
-    // Realistic starfield with multiple layers and star types
+    // Massive starfield - 10x scale for "wow" effect
     const layers = [
-      { count: 4000, size: 0.2, spread: 600, color: 0xffffff, type: 'distant' },
-      { count: 2500, size: 0.4, spread: 500, color: 0xffeedd, type: 'warm' },
-      { count: 800, size: 0.6, spread: 400, color: 0xaaccff, type: 'blue' },
-      { count: 300, size: 0.9, spread: 450, color: 0xffddaa, type: 'bright' },
-      { count: 50, size: 1.5, spread: 350, color: 0xffffee, type: 'giant' },
+      { count: 15000, size: 0.15, spread: 3000, color: 0xffffff, type: 'distant' },
+      { count: 8000, size: 0.25, spread: 2500, color: 0xffeedd, type: 'warm' },
+      { count: 4000, size: 0.4, spread: 2000, color: 0xaaccff, type: 'blue' },
+      { count: 1500, size: 0.6, spread: 1800, color: 0xffddaa, type: 'bright' },
+      { count: 500, size: 1.0, spread: 1500, color: 0xffffee, type: 'giant' },
+      { count: 100, size: 2.0, spread: 1200, color: 0xffffff, type: 'supergiant' },
     ];
 
     layers.forEach(layer => {
       const geometry = new THREE.BufferGeometry();
       const positions = new Float32Array(layer.count * 3);
       const colors = new Float32Array(layer.count * 3);
-      const sizes = new Float32Array(layer.count);
 
       const baseColor = new THREE.Color(layer.color);
 
       for (let i = 0; i < layer.count; i++) {
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
-        const r = layer.spread + Math.random() * 150;
+        const r = layer.spread + Math.random() * 500;
 
         positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
         positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
@@ -278,8 +280,6 @@ function App() {
         colors[i * 3] = Math.min(1, baseColor.r * variation + tempShift);
         colors[i * 3 + 1] = Math.min(1, baseColor.g * variation);
         colors[i * 3 + 2] = Math.min(1, baseColor.b * variation - tempShift);
-
-        sizes[i] = layer.size * (0.4 + Math.random() * 0.8);
       }
 
       geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -289,7 +289,7 @@ function App() {
         size: layer.size,
         vertexColors: true,
         transparent: true,
-        opacity: layer.type === 'giant' ? 1.0 : 0.85,
+        opacity: layer.type === 'supergiant' ? 1.0 : layer.type === 'giant' ? 0.95 : 0.85,
         sizeAttenuation: true,
         blending: THREE.AdditiveBlending,
       });
@@ -298,35 +298,49 @@ function App() {
       scene.add(stars);
     });
 
-    // Add Milky Way band
+    // Enhanced Milky Way band - much larger
     const milkyWayGeometry = new THREE.BufferGeometry();
-    const mwCount = 8000;
+    const mwCount = 25000;
     const mwPositions = new Float32Array(mwCount * 3);
     const mwColors = new Float32Array(mwCount * 3);
 
     for (let i = 0; i < mwCount; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const spread = (Math.random() - 0.5) * 0.3;
-      const r = 500 + Math.random() * 100;
+      const spread = (Math.random() - 0.5) * 0.4;
+      const r = 2000 + Math.random() * 800;
       
       mwPositions[i * 3] = r * Math.cos(angle);
-      mwPositions[i * 3 + 1] = r * spread * 0.2;
+      mwPositions[i * 3 + 1] = r * spread * 0.15;
       mwPositions[i * 3 + 2] = r * Math.sin(angle);
 
-      const brightness = 0.3 + Math.random() * 0.4;
-      mwColors[i * 3] = brightness * 0.8;
-      mwColors[i * 3 + 1] = brightness * 0.85;
-      mwColors[i * 3 + 2] = brightness;
+      const brightness = 0.3 + Math.random() * 0.5;
+      const hue = Math.random();
+      if (hue < 0.3) {
+        // Blue-white stars
+        mwColors[i * 3] = brightness * 0.7;
+        mwColors[i * 3 + 1] = brightness * 0.8;
+        mwColors[i * 3 + 2] = brightness;
+      } else if (hue < 0.6) {
+        // Yellow-white stars
+        mwColors[i * 3] = brightness * 0.9;
+        mwColors[i * 3 + 1] = brightness * 0.85;
+        mwColors[i * 3 + 2] = brightness * 0.7;
+      } else {
+        // Red-orange stars
+        mwColors[i * 3] = brightness;
+        mwColors[i * 3 + 1] = brightness * 0.6;
+        mwColors[i * 3 + 2] = brightness * 0.4;
+      }
     }
 
     milkyWayGeometry.setAttribute('position', new THREE.BufferAttribute(mwPositions, 3));
     milkyWayGeometry.setAttribute('color', new THREE.BufferAttribute(mwColors, 3));
 
     const milkyWayMaterial = new THREE.PointsMaterial({
-      size: 0.3,
+      size: 0.4,
       vertexColors: true,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.5,
       sizeAttenuation: true,
       blending: THREE.AdditiveBlending,
     });
@@ -337,30 +351,138 @@ function App() {
   };
 
   const createNebulae = (scene: THREE.Scene) => {
-    const nebulaTexture = generateNebulaTexture();
+    // Create massive nebulae for "wow" effect
+    const nebulaTypes = [
+      // Emission nebulae (red/pink)
+      { color1: [255, 50, 100], color2: [255, 100, 150], color3: [200, 50, 80], count: 12, size: 1500, spread: 3500 },
+      // Reflection nebulae (blue)
+      { color1: [50, 100, 255], color2: [100, 150, 255], color3: [80, 120, 200], count: 10, size: 1300, spread: 3200 },
+      // Planetary nebulae (green/cyan)
+      { color1: [50, 255, 200], color2: [100, 255, 220], color3: [80, 200, 180], count: 8, size: 1100, spread: 3000 },
+      // Dark nebulae (purple/dark)
+      { color1: [100, 50, 150], color2: [150, 80, 200], color3: [80, 40, 120], count: 10, size: 1600, spread: 3800 },
+      // Multi-color nebulae (orange/yellow)
+      { color1: [255, 150, 50], color2: [255, 200, 100], color3: [200, 120, 40], count: 9, size: 1400, spread: 3400 },
+    ];
 
-    for (let i = 0; i < 4; i++) {
-      const geometry = new THREE.PlaneGeometry(200, 200);
+    nebulaTypes.forEach((type) => {
+      for (let i = 0; i < type.count; i++) {
+        // Generate unique nebula texture for each
+        const nebulaTexture = generateColoredNebulaTexture(
+          type.color1 as [number, number, number],
+          type.color2 as [number, number, number],
+          type.color3 as [number, number, number]
+        );
+
+        // Multiple layers for depth
+        const layerCount = 4 + Math.floor(Math.random() * 3);
+        
+        for (let layer = 0; layer < layerCount; layer++) {
+          const size = type.size * (0.6 + layer * 0.35);
+          const geometry = new THREE.PlaneGeometry(size, size);
+          const material = new THREE.MeshBasicMaterial({
+            map: nebulaTexture,
+            transparent: true,
+            opacity: 0.15 - layer * 0.025,
+            blending: THREE.AdditiveBlending,
+            side: THREE.DoubleSide,
+            depthWrite: false,
+          });
+          
+          const nebula = new THREE.Mesh(geometry, material);
+
+          // Random position in space
+          const theta = Math.random() * Math.PI * 2;
+          const phi = Math.acos(2 * Math.random() - 1);
+          const dist = type.spread + Math.random() * 800;
+          
+          nebula.position.set(
+            dist * Math.sin(phi) * Math.cos(theta),
+            dist * Math.sin(phi) * Math.sin(theta) * 0.6,
+            dist * Math.cos(phi)
+          );
+          
+          // Random rotation
+          nebula.rotation.set(
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            Math.random() * Math.PI
+          );
+          
+          scene.add(nebula);
+        }
+      }
+    });
+
+    // Add distant galaxy clusters
+    for (let i = 0; i < 25; i++) {
+      const galaxyTexture = generateGalaxyTexture();
+      const size = 500 + Math.random() * 700;
+      const geometry = new THREE.PlaneGeometry(size, size);
       const material = new THREE.MeshBasicMaterial({
-        map: nebulaTexture,
+        map: galaxyTexture,
         transparent: true,
-        opacity: 0.15,
+        opacity: 0.25 + Math.random() * 0.15,
         blending: THREE.AdditiveBlending,
         side: THREE.DoubleSide,
         depthWrite: false,
       });
-      const nebula = new THREE.Mesh(geometry, material);
-
-      const angle = (i / 4) * Math.PI * 2;
-      const dist = 200 + Math.random() * 100;
-      nebula.position.set(
-        Math.cos(angle) * dist,
-        (Math.random() - 0.5) * 100,
-        Math.sin(angle) * dist
+      
+      const galaxy = new THREE.Mesh(geometry, material);
+      
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const dist = 4000 + Math.random() * 2000;
+      
+      galaxy.position.set(
+        dist * Math.sin(phi) * Math.cos(theta),
+        dist * Math.sin(phi) * Math.sin(theta),
+        dist * Math.cos(phi)
       );
-      nebula.lookAt(0, 0, 0);
-      nebula.rotation.z = Math.random() * Math.PI;
-      scene.add(nebula);
+      
+      galaxy.lookAt(0, 0, 0);
+      galaxy.rotation.z = Math.random() * Math.PI * 2;
+      
+      scene.add(galaxy);
+    }
+
+    // Add cosmic dust clouds
+    for (let i = 0; i < 30; i++) {
+      const dustTexture = generateColoredNebulaTexture(
+        [150, 150, 200],
+        [100, 100, 150],
+        [80, 80, 120]
+      );
+      const size = 800 + Math.random() * 1200;
+      const geometry = new THREE.PlaneGeometry(size, size);
+      const material = new THREE.MeshBasicMaterial({
+        map: dustTexture,
+        transparent: true,
+        opacity: 0.08 + Math.random() * 0.06,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+      });
+      
+      const dust = new THREE.Mesh(geometry, material);
+      
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const dist = 2000 + Math.random() * 1500;
+      
+      dust.position.set(
+        dist * Math.sin(phi) * Math.cos(theta),
+        dist * Math.sin(phi) * Math.sin(theta),
+        dist * Math.cos(phi)
+      );
+      
+      dust.rotation.set(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      );
+      
+      scene.add(dust);
     }
   };
 
@@ -368,7 +490,7 @@ function App() {
     const sunTexture = generateSunTexture();
 
     // Sun surface with custom shader - higher detail
-    const sunGeometry = new THREE.SphereGeometry(3.5, 96, 96);
+    const sunGeometry = new THREE.SphereGeometry(5, 96, 96);
     const sunMaterial = new THREE.ShaderMaterial({
       vertexShader: sunSurfaceVertexShader,
       fragmentShader: sunSurfaceFragmentShader,
@@ -383,10 +505,10 @@ function App() {
 
     // Multiple corona layers for realistic effect
     const coronaLayers = [
-      { radius: 4.2, opacity: 0.7 },
-      { radius: 5.0, opacity: 0.5 },
-      { radius: 6.0, opacity: 0.3 },
-      { radius: 7.5, opacity: 0.15 },
+      { radius: 6, opacity: 0.7 },
+      { radius: 7.5, opacity: 0.5 },
+      { radius: 9, opacity: 0.3 },
+      { radius: 11, opacity: 0.15 },
     ];
 
     coronaLayers.forEach((layer, i) => {
@@ -409,9 +531,9 @@ function App() {
 
     // Enhanced sun glow with multiple layers
     const glowSizes = [
-      { size: 20, opacity: 0.6 },
-      { size: 30, opacity: 0.3 },
-      { size: 45, opacity: 0.15 },
+      { size: 35, opacity: 0.6 },
+      { size: 55, opacity: 0.3 },
+      { size: 80, opacity: 0.15 },
     ];
 
     glowSizes.forEach(glowConfig => {
@@ -446,14 +568,14 @@ function App() {
   };
 
   const createAsteroidBelt = (scene: THREE.Scene) => {
-    const count = 2000;
+    const count = 5000;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     const sizes = new Float32Array(count);
 
-    const innerRadius = 24;
-    const outerRadius = 27;
+    const innerRadius = 38;
+    const outerRadius = 43;
 
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;

@@ -597,3 +597,117 @@ export function generateBumpMap(size: number, scale: number, octaves: number): T
   ctx.putImageData(imageData, 0, 0);
   return new THREE.CanvasTexture(canvas);
 }
+
+// Generate colored nebula texture
+export function generateColoredNebulaTexture(
+  color1: [number, number, number],
+  color2: [number, number, number],
+  color3: [number, number, number]
+): THREE.CanvasTexture {
+  const size = 1024;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  const imageData = ctx.createImageData(size, size);
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const nx = x / size * 5;
+      const ny = y / size * 5;
+      
+      // Multiple noise layers for complex structure
+      const n1 = fbm(nx, ny, 6);
+      const n2 = fbm(nx * 2 + 50, ny * 2 + 50, 5);
+      const n3 = fbm(nx * 0.5 + 100, ny * 0.5 + 100, 4);
+      const n4 = fbm(nx * 3 + 150, ny * 3 + 150, 3);
+
+      // Distance from center for falloff
+      const cx = x / size - 0.5;
+      const cy = y / size - 0.5;
+      const dist = Math.sqrt(cx * cx + cy * cy);
+      const falloff = Math.max(0, 1 - dist * 1.8);
+      const softFalloff = falloff * falloff;
+
+      // Mix colors based on noise
+      const t1 = n1;
+      const t2 = n2;
+      const t3 = n3;
+      
+      const r = (color1[0] * t1 + color2[0] * t2 + color3[0] * t3) / (t1 + t2 + t3 + 0.001);
+      const g = (color1[1] * t1 + color2[1] * t2 + color3[1] * t3) / (t1 + t2 + t3 + 0.001);
+      const b = (color1[2] * t1 + color2[2] * t2 + color3[2] * t3) / (t1 + t2 + t3 + 0.001);
+
+      // Add detail with n4
+      const detail = n4 * 0.3;
+      
+      const finalR = Math.min(255, r * softFalloff + detail * 50);
+      const finalG = Math.min(255, g * softFalloff + detail * 50);
+      const finalB = Math.min(255, b * softFalloff + detail * 50);
+      
+      // Alpha based on density
+      const density = (n1 + n2 + n3) / 3;
+      const alpha = density * softFalloff * 255;
+
+      const idx = (y * size + x) * 4;
+      imageData.data[idx] = finalR;
+      imageData.data[idx + 1] = finalG;
+      imageData.data[idx + 2] = finalB;
+      imageData.data[idx + 3] = Math.min(255, alpha);
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return new THREE.CanvasTexture(canvas);
+}
+
+// Generate galaxy texture
+export function generateGalaxyTexture(): THREE.CanvasTexture {
+  const size = 1024;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  const imageData = ctx.createImageData(size, size);
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const nx = x / size - 0.5;
+      const ny = y / size - 0.5;
+      
+      // Spiral arm pattern
+      const dist = Math.sqrt(nx * nx + ny * ny);
+      const angle = Math.atan2(ny, nx);
+      
+      // Spiral arms
+      const spiral = Math.sin(angle * 3 + dist * 15) * 0.5 + 0.5;
+      const armStrength = Math.exp(-dist * 4) * spiral;
+      
+      // Core brightness
+      const core = Math.exp(-dist * 8);
+      
+      // Noise for detail
+      const noise = fbm(nx * 10, ny * 10, 4);
+      
+      // Combine
+      const brightness = (armStrength + core * 2 + noise * 0.2) * Math.exp(-dist * 3);
+      
+      // Color gradient (blue outer, yellow core)
+      const colorMix = Math.exp(-dist * 5);
+      const r = Math.min(255, brightness * (200 + colorMix * 55));
+      const g = Math.min(255, brightness * (180 + colorMix * 75));
+      const b = Math.min(255, brightness * (255 - colorMix * 100));
+      
+      const alpha = Math.min(255, brightness * 255);
+
+      const idx = (y * size + x) * 4;
+      imageData.data[idx] = r;
+      imageData.data[idx + 1] = g;
+      imageData.data[idx + 2] = b;
+      imageData.data[idx + 3] = alpha;
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return new THREE.CanvasTexture(canvas);
+}
