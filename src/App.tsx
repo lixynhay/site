@@ -691,29 +691,30 @@ function App() {
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black z-50">
           <div className="text-center">
-            <div className="relative w-20 h-20 mx-auto mb-6">
-              <div className="absolute inset-0 rounded-full border-2 border-yellow-500/20" />
-              <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-yellow-400 animate-spin" />
-              <div className="absolute inset-2 rounded-full border-2 border-transparent border-t-orange-400 animate-spin" style={{ animationDuration: '1.5s' }} />
-              <div className="absolute inset-4 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 animate-pulse" />
+            <div className="relative w-24 h-24 mx-auto mb-8">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 animate-pulse" />
+              <div className="absolute inset-2 rounded-full border-4 border-transparent border-t-purple-400 border-r-pink-400 animate-spin" />
+              <div className="absolute inset-4 rounded-full border-4 border-transparent border-b-blue-400 border-l-cyan-400 animate-spin" style={{ animationDuration: '1.5s', animationDirection: 'reverse' }} />
+              <div className="absolute inset-6 rounded-full bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 animate-pulse shadow-2xl shadow-orange-500/50" />
             </div>
-            <p className="text-white/80 text-sm font-light tracking-wider">ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ...</p>
+            <p className="text-white/90 text-base font-medium tracking-wide">Загрузка Солнечной системы</p>
+            <p className="text-white/40 text-xs mt-2">Подготовка 3D моделей...</p>
           </div>
         </div>
       )}
 
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-10 pointer-events-none">
-        <div className="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-yellow-400/20 to-orange-500/20 backdrop-blur-xl border border-yellow-400/30 flex items-center justify-center shadow-lg shadow-yellow-500/20">
-              <span className="text-xl md:text-2xl">☀️</span>
+        <div className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 flex items-center justify-center shadow-xl shadow-orange-500/30 btn-elevated">
+              <span className="text-2xl md:text-3xl">☀️</span>
             </div>
             <div>
-              <h1 className="text-base md:text-xl font-bold text-white tracking-wide">
+              <h1 className="text-xl md:text-2xl font-bold text-white tracking-tight">
                 Солнечная система
               </h1>
-              <p className="text-[10px] md:text-xs text-white/40 font-light">
+              <p className="text-xs md:text-sm text-white/50 font-normal mt-0.5">
                 Интерактивная 3D модель
               </p>
             </div>
@@ -721,8 +722,8 @@ function App() {
           
           {!isMobile && (
             <div className="text-right">
-              <p className="text-[10px] text-white/30 font-light">
-                {hoveredPlanet ? hoveredPlanet.nameRu : 'Наведите на планету'}
+              <p className="text-xs text-white/40 font-normal">
+                {hoveredPlanet ? hoveredPlanet.nameRu : 'Наведите курсор на планету'}
               </p>
             </div>
           )}
@@ -733,7 +734,7 @@ function App() {
       {isMobile && (
         <button
           onClick={() => setShowControls(!showControls)}
-          className="absolute top-16 right-3 z-20 w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 text-white hover:bg-white/10 transition-all shadow-lg"
+          className="absolute top-20 right-4 z-20 w-12 h-12 flex items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10 text-white btn-elevated"
         >
           {showControls ? '✕' : '⚙️'}
         </button>
@@ -741,44 +742,44 @@ function App() {
 
       {/* Controls */}
       {(!isMobile || showControls) && (
-        <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-10">
-          <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4 bg-gradient-to-r from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-2xl rounded-2xl px-4 md:px-6 py-3 md:py-4 border border-white/10 shadow-2xl shadow-black/50">
+        <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-10">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 bg-gradient-to-r from-purple-900/80 via-indigo-900/80 to-blue-900/80 backdrop-blur-2xl rounded-3xl px-5 md:px-8 py-4 md:py-5 border border-white/10 shadow-2xl shadow-purple-500/20">
             {/* Play/Pause */}
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="group relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 border border-white/10 transition-all text-white flex-shrink-0 shadow-lg"
+              className="group relative w-14 h-14 md:w-16 md:h-16 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white flex-shrink-0 shadow-xl shadow-purple-500/40 btn-elevated"
             >
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-400/0 to-purple-400/0 group-hover:from-blue-400/10 group-hover:to-purple-400/10 transition-all" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/0 to-white/0 group-hover:from-white/10 group-hover:to-white/5 transition-all" />
               {isPlaying ? (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="relative">
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" className="relative">
                   <rect x="3" y="2" width="4" height="12" rx="1" />
                   <rect x="9" y="2" width="4" height="12" rx="1" />
                 </svg>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="relative">
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" className="relative">
                   <path d="M4 2l10 6-10 6V2z" />
                 </svg>
               )}
             </button>
 
             {/* Speed control */}
-            <div className="flex items-center gap-2 md:gap-3">
-              <div className="flex items-center gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/40">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="flex items-center gap-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/60">
                   <circle cx="12" cy="12" r="10" />
                   <polyline points="12 6 12 12 16 14" />
                 </svg>
-                <span className="text-white/50 text-xs font-medium">Скорость</span>
+                <span className="text-white/70 text-sm font-medium">Скорость</span>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-2">
                 {speedOptions.map((s) => (
                   <button
                     key={s}
                     onClick={() => setSpeed(s)}
-                    className={`px-2 md:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex-shrink-0 ${
+                    className={`px-3 md:px-4 py-2 rounded-full text-sm font-semibold transition-all flex-shrink-0 ${
                       speed === s
-                        ? 'bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/30 scale-105'
-                        : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80 border border-white/5'
+                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/40 scale-110'
+                        : 'bg-white/10 text-white/60 hover:bg-white/15 hover:text-white/90 border border-white/10'
                     }`}
                   >
                     {s}x
@@ -792,32 +793,32 @@ function App() {
 
       {/* Planet info panel */}
       {selectedPlanet && (
-        <div className="absolute top-20 md:top-24 right-2 md:right-6 w-72 md:w-80 animate-fadeIn z-20">
-          <div className="bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl shadow-black/50 overflow-hidden">
+        <div className="absolute top-24 md:top-28 right-4 md:right-8 w-80 md:w-96 animate-fadeIn z-20">
+          <div className="bg-gradient-to-br from-purple-900/90 via-indigo-900/90 to-blue-900/90 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl shadow-purple-500/20 overflow-hidden">
             {/* Header with gradient */}
-            <div className="relative p-4 md:p-5 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border-b border-white/5">
+            <div className="relative p-5 md:p-6 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 border-b border-white/10">
               <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="relative">
                     <div
-                      className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-2xl"
+                      className="w-16 h-16 md:w-20 md:h-20 rounded-2xl shadow-2xl"
                       style={{
-                        background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), ${selectedPlanet.atmosphereColor})`,
-                        boxShadow: `0 0 30px ${selectedPlanet.atmosphereColor}40`,
+                        background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), ${selectedPlanet.atmosphereColor})`,
+                        boxShadow: `0 0 40px ${selectedPlanet.atmosphereColor}60`,
                       }}
                     />
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/30 to-transparent" />
                   </div>
                   <div>
-                    <h2 className="text-lg md:text-xl font-bold text-white">{selectedPlanet.nameRu}</h2>
-                    <p className="text-xs text-white/40 font-light">{selectedPlanet.name}</p>
+                    <h2 className="text-xl md:text-2xl font-bold text-white">{selectedPlanet.nameRu}</h2>
+                    <p className="text-sm text-white/50 font-normal mt-1">{selectedPlanet.name}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedPlanet(null)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all"
+                  className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/15 text-white/60 hover:text-white transition-all btn-elevated"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <line x1="18" y1="6" x2="6" y2="18" />
                     <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
@@ -826,15 +827,15 @@ function App() {
             </div>
 
             {/* Stats grid */}
-            <div className="p-4 md:p-5 space-y-3">
+            <div className="p-5 md:p-6 space-y-4">
               {/* Type badge */}
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-white/10 text-[10px] md:text-xs text-white/70 font-medium">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-500/30 to-pink-500/30 border border-white/20 text-xs md:text-sm text-white/80 font-semibold shadow-lg">
                   {selectedPlanet.type}
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 md:gap-3">
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
                 <StatCard
                   icon="📏"
                   label="Диаметр"
@@ -888,8 +889,8 @@ function App() {
               </div>
 
               {/* Description */}
-              <div className="pt-3 border-t border-white/5">
-                <p className="text-xs md:text-sm text-white/60 leading-relaxed">
+              <div className="pt-4 border-t border-white/10">
+                <p className="text-sm md:text-base text-white/70 leading-relaxed font-normal">
                   {selectedPlanet.description}
                 </p>
               </div>
@@ -900,36 +901,36 @@ function App() {
 
       {/* Planet list - desktop */}
       {!isMobile && (
-        <div className="absolute top-24 left-4 md:left-6 z-10">
-          <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-2xl rounded-2xl border border-white/10 p-2 shadow-2xl shadow-black/50">
-            <div className="flex flex-col gap-1">
+        <div className="absolute top-28 left-6 z-10">
+          <div className="bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-blue-900/80 backdrop-blur-2xl rounded-3xl border border-white/10 p-3 shadow-2xl shadow-purple-500/20">
+            <div className="flex flex-col gap-2">
               {planets.map((planet, index) => (
                 <button
                   key={planet.name}
                   onClick={() => setSelectedPlanet(planet)}
-                  className={`group flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-all ${
+                  className={`group flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all ${
                     selectedPlanet?.name === planet.name
-                      ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-white/10'
-                      : 'text-white/50 hover:bg-white/5 hover:text-white/80'
+                      ? 'bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-white border border-white/20 shadow-lg shadow-purple-500/20 scale-105'
+                      : 'text-white/60 hover:bg-white/10 hover:text-white/90 hover:scale-102'
                   }`}
                 >
                   <div className="relative">
                     <div
-                      className="w-3 h-3 rounded-full transition-transform group-hover:scale-125"
+                      className="w-4 h-4 rounded-full transition-all group-hover:scale-125"
                       style={{ 
                         backgroundColor: planet.atmosphereColor,
-                        boxShadow: selectedPlanet?.name === planet.name ? `0 0 10px ${planet.atmosphereColor}` : 'none'
+                        boxShadow: selectedPlanet?.name === planet.name ? `0 0 15px ${planet.atmosphereColor}` : 'none'
                       }}
                     />
                     {selectedPlanet?.name === planet.name && (
-                      <div className="absolute inset-0 rounded-full animate-ping" style={{ backgroundColor: planet.atmosphereColor, opacity: 0.3 }} />
+                      <div className="absolute inset-0 rounded-full animate-ping" style={{ backgroundColor: planet.atmosphereColor, opacity: 0.4 }} />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">{planet.nameRu}</p>
-                    <p className="text-[10px] text-white/30 truncate">{planet.name}</p>
+                    <p className="text-sm font-semibold truncate">{planet.nameRu}</p>
+                    <p className="text-xs text-white/40 truncate">{planet.name}</p>
                   </div>
-                  <span className="text-[10px] text-white/30">{index + 1}</span>
+                  <span className="text-xs text-white/30 font-medium">{index + 1}</span>
                 </button>
               ))}
             </div>
@@ -949,25 +950,29 @@ function StatCard({ icon, label, value, unit, color, wide }: {
   wide?: boolean;
 }) {
   const colorClasses: Record<string, string> = {
-    blue: 'from-blue-500/10 to-blue-600/5 border-blue-400/20',
-    yellow: 'from-yellow-500/10 to-orange-500/5 border-yellow-400/20',
-    purple: 'from-purple-500/10 to-pink-500/5 border-purple-400/20',
-    green: 'from-green-500/10 to-emerald-500/5 border-green-400/20',
-    red: 'from-red-500/10 to-orange-500/5 border-red-400/20',
-    pink: 'from-pink-500/10 to-rose-500/5 border-pink-400/20',
-    cyan: 'from-cyan-500/10 to-teal-500/5 border-cyan-400/20',
+    blue: 'from-blue-500/20 to-cyan-500/10 border-blue-400/30 shadow-blue-500/10',
+    yellow: 'from-yellow-500/20 to-orange-500/10 border-yellow-400/30 shadow-yellow-500/10',
+    purple: 'from-purple-500/20 to-pink-500/10 border-purple-400/30 shadow-purple-500/10',
+    green: 'from-green-500/20 to-emerald-500/10 border-green-400/30 shadow-green-500/10',
+    red: 'from-red-500/20 to-orange-500/10 border-red-400/30 shadow-red-500/10',
+    pink: 'from-pink-500/20 to-rose-500/10 border-pink-400/30 shadow-pink-500/10',
+    cyan: 'from-cyan-500/20 to-teal-500/10 border-cyan-400/30 shadow-cyan-500/10',
   };
 
   return (
-    <div className={`relative p-2.5 md:p-3 rounded-xl bg-gradient-to-br ${colorClasses[color]} border backdrop-blur-sm ${wide ? 'col-span-2' : ''}`}>
-      <div className="flex items-start gap-2">
-        <span className="text-sm md:text-base">{icon}</span>
-        <div className="flex-1 min-w-0">
-          <p className="text-[9px] md:text-[10px] text-white/40 font-light mb-0.5">{label}</p>
-          <p className="text-xs md:text-sm font-bold text-white truncate">
-            {value}
-            {unit && <span className="text-[10px] md:text-xs text-white/50 font-normal ml-1">{unit}</span>}
-          </p>
+    <div className={`stat-card ${wide ? 'col-span-2' : ''} shadow-lg hover:shadow-xl`}>
+      <div className={`relative p-3 md:p-4 rounded-2xl bg-gradient-to-br ${colorClasses[color]} border backdrop-blur-sm`}>
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+            <span className="text-lg">{icon}</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] md:text-xs text-white/50 font-normal mb-1">{label}</p>
+            <p className="text-sm md:text-base font-bold text-white truncate">
+              {value}
+              {unit && <span className="text-xs md:text-sm text-white/60 font-normal ml-1">{unit}</span>}
+            </p>
+          </div>
         </div>
       </div>
     </div>
