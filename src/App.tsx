@@ -68,21 +68,21 @@ interface PlanetData {
 
 const planets: PlanetData[] = [
   {
-    name: 'Mercury', nameRu: 'Меркурий', radius: 0.5, distance: 12,
+    name: 'Mercury', nameRu: 'Меркурий', radius: 0.5, distance: 15,
     realDiameter: 4879, realDistance: 57.9, orbitalPeriod: 88, speed: 4.15,
     rotationSpeed: 0.005, tilt: 0.03, orbitalTilt: 0.12, hasAtmosphere: false, atmosphereColor: '#b5b5b5',
     description: 'Самая маленькая планета. Поверхность покрыта кратерами, похожа на Луну. Нет атмосферы и спутников.',
     temperature: '-180°C до +430°C', moons: 0, type: 'Скалистая', gravity: '3.7 м/с²', dayLength: '59 дней',
   },
   {
-    name: 'Venus', nameRu: 'Венера', radius: 1.1, distance: 18,
+    name: 'Venus', nameRu: 'Венера', radius: 1.1, distance: 25,
     realDiameter: 12104, realDistance: 108.2, orbitalPeriod: 225, speed: 1.62,
     rotationSpeed: -0.002, tilt: 2.64, orbitalTilt: 0.06, hasAtmosphere: true, atmosphereColor: '#e8cda0',
     description: 'Самая горячая планета из-за парникового эффекта. Плотная атмосфера из CO₂ создаёт давление в 90 раз выше земного.',
     temperature: '+462°C', moons: 0, type: 'Скалистая', gravity: '8.87 м/с²', dayLength: '243 дня',
   },
   {
-    name: 'Earth', nameRu: 'Земля', radius: 1.2, distance: 25,
+    name: 'Earth', nameRu: 'Земля', radius: 1.2, distance: 35,
     realDiameter: 12756, realDistance: 149.6, orbitalPeriod: 365, speed: 1.0,
     rotationSpeed: 0.02, tilt: 0.41, orbitalTilt: 0.0, hasAtmosphere: true, atmosphereColor: '#4da6ff',
     description: 'Единственная известная планета с жизнью. 71% поверхности покрыт водой. Магнитное поле защищает от солнечного ветра.',
@@ -92,7 +92,7 @@ const planets: PlanetData[] = [
     ]
   },
   {
-    name: 'Mars', nameRu: 'Марс', radius: 0.8, distance: 33,
+    name: 'Mars', nameRu: 'Марс', radius: 0.8, distance: 50,
     realDiameter: 6792, realDistance: 227.9, orbitalPeriod: 687, speed: 0.53,
     rotationSpeed: 0.018, tilt: 0.44, orbitalTilt: 0.03, hasAtmosphere: true, atmosphereColor: '#e85d3a',
     description: 'Красная планета. Здесь находится гора Олимп — высочайший вулкан в Солнечной системе (21.9 км).',
@@ -103,7 +103,7 @@ const planets: PlanetData[] = [
     ]
   },
   {
-    name: 'Jupiter', nameRu: 'Юпитер', radius: 3.5, distance: 50,
+    name: 'Jupiter', nameRu: 'Юпитер', radius: 3.5, distance: 100,
     realDiameter: 142984, realDistance: 778.5, orbitalPeriod: 4333, speed: 0.084,
     rotationSpeed: 0.04, tilt: 0.05, orbitalTilt: 0.02, hasAtmosphere: true, atmosphereColor: '#e8a952',
     description: 'Крупнейшая планета. Большое Красное Пятно — гигантский шторм, бушующий более 350 лет. Мощнейшее магнитное поле.',
@@ -116,7 +116,7 @@ const planets: PlanetData[] = [
     ]
   },
   {
-    name: 'Saturn', nameRu: 'Сатурн', radius: 3.0, distance: 70,
+    name: 'Saturn', nameRu: 'Сатурн', radius: 3.0, distance: 150,
     realDiameter: 120536, realDistance: 1434, orbitalPeriod: 10759, speed: 0.034,
     rotationSpeed: 0.038, tilt: 0.47, orbitalTilt: 0.04, hasAtmosphere: true, atmosphereColor: '#f0d68a',
     description: 'Знаменит кольцами из льда и камней шириной 282 000 км, но толщиной всего 10 метров. Плотность меньше воды.',
@@ -127,7 +127,7 @@ const planets: PlanetData[] = [
     ]
   },
   {
-    name: 'Uranus', nameRu: 'Уран', radius: 2.0, distance: 90,
+    name: 'Uranus', nameRu: 'Уран', radius: 2.0, distance: 220,
     realDiameter: 51118, realDistance: 2871, orbitalPeriod: 30687, speed: 0.012,
     rotationSpeed: 0.03, tilt: 1.71, orbitalTilt: 0.01, hasAtmosphere: true, atmosphereColor: '#7de8e8',
     description: 'Ледяной гигант с уникальным наклоном оси 98° — вращается «лёжа на боку». Атмосфера содержит метан, придающий голубой цвет.',
@@ -138,7 +138,7 @@ const planets: PlanetData[] = [
     ]
   },
   {
-    name: 'Neptune', nameRu: 'Нептун', radius: 1.9, distance: 110,
+    name: 'Neptune', nameRu: 'Нептун', radius: 1.9, distance: 280,
     realDiameter: 49528, realDistance: 4495, orbitalPeriod: 60190, speed: 0.006,
     rotationSpeed: 0.032, tilt: 0.49, orbitalTilt: 0.03, hasAtmosphere: true, atmosphereColor: '#4166f5',
     description: 'Самая далёкая планета. Здесь дуют самые быстрые ветры в Солнечной системе — до 2100 км/ч. Открыт математически.',
@@ -148,7 +148,7 @@ const planets: PlanetData[] = [
     ]
   },
   {
-    name: 'Pluto', nameRu: 'Плутон', radius: 0.35, distance: 130,
+    name: 'Pluto', nameRu: 'Плутон', radius: 0.35, distance: 350,
     realDiameter: 2376, realDistance: 5906, orbitalPeriod: 90560, speed: 0.004,
     rotationSpeed: 0.01, tilt: 2.08, orbitalTilt: 0.3, hasAtmosphere: false, atmosphereColor: '#ccaa88',
     description: 'Карликовая планета в поясе Койпера. Имеет ледяную поверхность и тонкую атмосферу из азота. Самый большой спутник — Харон.',
@@ -279,8 +279,8 @@ function App() {
     scene.fog = new THREE.FogExp2(0x000005, 0.00015);
     sceneRef.current = scene;
 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000);
-    camera.position.set(0, 60, 140);
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 20000);
+    camera.position.set(0, 100, 250);
     cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ 
@@ -422,78 +422,208 @@ function App() {
       scene.add(stars);
     });
 
-    // Enhanced Milky Way with spiral structure
+    // Enhanced Milky Way with realistic spiral structure
     const milkyWayGeometry = new THREE.BufferGeometry();
-    const mwCount = 35000;
+    const mwCount = 60000;
     const mwPositions = new Float32Array(mwCount * 3);
     const mwColors = new Float32Array(mwCount * 3);
+    const mwSizes = new Float32Array(mwCount);
+
+    const numArms = 4; // 4 spiral arms
+    const armSpread = 0.4;
+    const coreRadius = 800;
+    const diskRadius = 3500;
 
     for (let i = 0; i < mwCount; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const armOffset = Math.sin(angle * 2) * 0.3; // Spiral arms
-      const spread = (Math.random() - 0.5) * 0.5 + armOffset;
-      const r = 2000 + Math.random() * 1000;
-      
+      // Determine if star is in core, disk, or arm
+      const region = Math.random();
+      let r: number, angle: number, height: number;
+
+      if (region < 0.15) {
+        // Galactic core (dense, bright)
+        r = Math.random() * coreRadius;
+        angle = Math.random() * Math.PI * 2;
+        height = (Math.random() - 0.5) * 200;
+      } else if (region < 0.6) {
+        // Spiral arms
+        const arm = Math.floor(Math.random() * numArms);
+        const armAngle = (arm / numArms) * Math.PI * 2;
+        r = coreRadius + Math.random() * (diskRadius - coreRadius);
+        const spiralAngle = armAngle + (r / diskRadius) * Math.PI * 2;
+        angle = spiralAngle + (Math.random() - 0.5) * armSpread;
+        height = (Math.random() - 0.5) * 150 * (1 - r / diskRadius);
+      } else {
+        // Disk stars
+        r = coreRadius + Math.random() * (diskRadius - coreRadius);
+        angle = Math.random() * Math.PI * 2;
+        height = (Math.random() - 0.5) * 300;
+      }
+
       mwPositions[i * 3] = r * Math.cos(angle);
-      mwPositions[i * 3 + 1] = r * spread * 0.12;
+      mwPositions[i * 3 + 1] = height;
       mwPositions[i * 3 + 2] = r * Math.sin(angle);
 
-      const brightness = 0.3 + Math.random() * 0.6;
+      // Star colors based on position and type
+      const brightness = 0.4 + Math.random() * 0.6;
       const hue = Math.random();
-      
-      // More diverse star colors in Milky Way
-      if (hue < 0.2) {
-        // Blue young stars
-        mwColors[i * 3] = brightness * 0.6;
-        mwColors[i * 3 + 1] = brightness * 0.7;
-        mwColors[i * 3 + 2] = brightness;
-      } else if (hue < 0.4) {
-        // White stars
-        mwColors[i * 3] = brightness * 0.95;
-        mwColors[i * 3 + 1] = brightness * 0.95;
-        mwColors[i * 3 + 2] = brightness;
-      } else if (hue < 0.6) {
-        // Yellow stars
-        mwColors[i * 3] = brightness;
-        mwColors[i * 3 + 1] = brightness * 0.9;
-        mwColors[i * 3 + 2] = brightness * 0.7;
-      } else if (hue < 0.8) {
-        // Orange stars
-        mwColors[i * 3] = brightness;
-        mwColors[i * 3 + 1] = brightness * 0.7;
-        mwColors[i * 3 + 2] = brightness * 0.5;
+      const distFromCenter = r / diskRadius;
+
+      if (region < 0.15) {
+        // Core: mostly old red/yellow stars
+        if (hue < 0.6) {
+          mwColors[i * 3] = brightness;
+          mwColors[i * 3 + 1] = brightness * 0.7;
+          mwColors[i * 3 + 2] = brightness * 0.4;
+        } else {
+          mwColors[i * 3] = brightness;
+          mwColors[i * 3 + 1] = brightness * 0.9;
+          mwColors[i * 3 + 2] = brightness * 0.7;
+        }
+        mwSizes[i] = 0.4 + Math.random() * 0.3;
+      } else if (region < 0.6) {
+        // Arms: mix of young blue and old stars
+        if (hue < 0.3) {
+          // Young blue stars in arms
+          mwColors[i * 3] = brightness * 0.6;
+          mwColors[i * 3 + 1] = brightness * 0.7;
+          mwColors[i * 3 + 2] = brightness;
+          mwSizes[i] = 0.5 + Math.random() * 0.4;
+        } else if (hue < 0.5) {
+          // White stars
+          mwColors[i * 3] = brightness * 0.95;
+          mwColors[i * 3 + 1] = brightness * 0.95;
+          mwColors[i * 3 + 2] = brightness;
+          mwSizes[i] = 0.35 + Math.random() * 0.25;
+        } else {
+          // Yellow/orange stars
+          mwColors[i * 3] = brightness;
+          mwColors[i * 3 + 1] = brightness * (0.8 - distFromCenter * 0.2);
+          mwColors[i * 3 + 2] = brightness * (0.6 - distFromCenter * 0.2);
+          mwSizes[i] = 0.3 + Math.random() * 0.2;
+        }
       } else {
-        // Red old stars
-        mwColors[i * 3] = brightness;
-        mwColors[i * 3 + 1] = brightness * 0.5;
-        mwColors[i * 3 + 2] = brightness * 0.4;
+        // Disk: older stars
+        if (hue < 0.4) {
+          mwColors[i * 3] = brightness;
+          mwColors[i * 3 + 1] = brightness * 0.8;
+          mwColors[i * 3 + 2] = brightness * 0.5;
+        } else {
+          mwColors[i * 3] = brightness * 0.9;
+          mwColors[i * 3 + 1] = brightness * 0.7;
+          mwColors[i * 3 + 2] = brightness * 0.4;
+        }
+        mwSizes[i] = 0.25 + Math.random() * 0.2;
       }
     }
 
     milkyWayGeometry.setAttribute('position', new THREE.BufferAttribute(mwPositions, 3));
     milkyWayGeometry.setAttribute('color', new THREE.BufferAttribute(mwColors, 3));
+    milkyWayGeometry.setAttribute('size', new THREE.BufferAttribute(mwSizes, 1));
 
     const milkyWayMaterial = new THREE.PointsMaterial({
-      size: 0.35,
+      size: 0.4,
       vertexColors: true,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.65,
       sizeAttenuation: true,
       blending: THREE.AdditiveBlending,
     });
 
     const milkyWay = new THREE.Points(milkyWayGeometry, milkyWayMaterial);
-    milkyWay.rotation.x = Math.PI * 0.3;
+    milkyWay.rotation.x = Math.PI * 0.35;
     scene.add(milkyWay);
+
+    // Add star systems (stars with planets)
+    this.createStarSystems(scene);
+  };
+
+  const createStarSystems = (scene: THREE.Scene) => {
+    const numSystems = 15;
+    
+    for (let i = 0; i < numSystems; i++) {
+      const systemGroup = new THREE.Group();
+      
+      // Random position in space
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const distance = 800 + Math.random() * 1500;
+      
+      systemGroup.position.set(
+        distance * Math.sin(phi) * Math.cos(theta),
+        distance * Math.sin(phi) * Math.sin(theta),
+        distance * Math.cos(phi)
+      );
+
+      // Central star
+      const starSize = 2 + Math.random() * 4;
+      const starGeometry = new THREE.SphereGeometry(starSize, 32, 32);
+      
+      // Random star color
+      const starType = Math.random();
+      let starColor: number;
+      if (starType < 0.3) {
+        starColor = 0xff6644; // Red star
+      } else if (starType < 0.6) {
+        starColor = 0xffee88; // Yellow star
+      } else if (starType < 0.85) {
+        starColor = 0xffffff; // White star
+      } else {
+        starColor = 0x88aaff; // Blue star
+      }
+      
+      const starMaterial = new THREE.MeshBasicMaterial({
+        color: starColor,
+      });
+      const star = new THREE.Mesh(starGeometry, starMaterial);
+      systemGroup.add(star);
+
+      // Star glow
+      const glowGeometry = new THREE.SphereGeometry(starSize * 1.5, 16, 16);
+      const glowMaterial = new THREE.MeshBasicMaterial({
+        color: starColor,
+        transparent: true,
+        opacity: 0.2,
+        blending: THREE.AdditiveBlending,
+      });
+      const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+      systemGroup.add(glow);
+
+      // Planets (2-5 per system)
+      const numPlanets = 2 + Math.floor(Math.random() * 4);
+      for (let j = 0; j < numPlanets; j++) {
+        const planetDistance = starSize * 3 + j * (starSize * 2 + Math.random() * starSize);
+        const planetSize = 0.3 + Math.random() * 0.8;
+        
+        const planetGeometry = new THREE.SphereGeometry(planetSize, 16, 16);
+        const planetColor = new THREE.Color(
+          0.3 + Math.random() * 0.7,
+          0.3 + Math.random() * 0.7,
+          0.3 + Math.random() * 0.7
+        );
+        const planetMaterial = new THREE.MeshStandardMaterial({
+          color: planetColor,
+          roughness: 0.7,
+          metalness: 0.3,
+        });
+        const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+        planet.position.x = planetDistance;
+        planet.userData.orbitRadius = planetDistance;
+        planet.userData.orbitSpeed = 0.5 + Math.random() * 1.5;
+        planet.userData.orbitOffset = Math.random() * Math.PI * 2;
+        systemGroup.add(planet);
+      }
+
+      scene.add(systemGroup);
+    }
   };
 
   const createNebulae = (scene: THREE.Scene) => {
     const nebulaTypes = [
-      { color1: [255, 50, 100], color2: [255, 100, 150], color3: [200, 50, 80], count: 12, size: 1500, spread: 3500 },
-      { color1: [50, 100, 255], color2: [100, 150, 255], color3: [80, 120, 200], count: 10, size: 1300, spread: 3200 },
-      { color1: [50, 255, 200], color2: [100, 255, 220], color3: [80, 200, 180], count: 8, size: 1100, spread: 3000 },
-      { color1: [100, 50, 150], color2: [150, 80, 200], color3: [80, 40, 120], count: 10, size: 1600, spread: 3800 },
-      { color1: [255, 150, 50], color2: [255, 200, 100], color3: [200, 120, 40], count: 9, size: 1400, spread: 3400 },
+      { color1: [255, 50, 100], color2: [255, 100, 150], color3: [200, 50, 80], count: 15, size: 2500, spread: 6000 },
+      { color1: [50, 100, 255], color2: [100, 150, 255], color3: [80, 120, 200], count: 12, size: 2200, spread: 5500 },
+      { color1: [50, 255, 200], color2: [100, 255, 220], color3: [80, 200, 180], count: 10, size: 1800, spread: 5000 },
+      { color1: [100, 50, 150], color2: [150, 80, 200], color3: [80, 40, 120], count: 12, size: 2800, spread: 7000 },
+      { color1: [255, 150, 50], color2: [255, 200, 100], color3: [200, 120, 40], count: 11, size: 2400, spread: 6500 },
     ];
 
     nebulaTypes.forEach((type) => {
@@ -542,25 +672,25 @@ function App() {
     });
 
     // Diverse galaxy types
-    for (let i = 0; i < 35; i++) {
+    for (let i = 0; i < 50; i++) {
       const galaxyTexture = generateGalaxyTexture();
-      const size = 400 + Math.random() * 900;
+      const size = 800 + Math.random() * 1800;
       const geometry = new THREE.PlaneGeometry(size, size);
       
       // Vary opacity and color for different galaxy types
       const galaxyType = Math.random();
-      let opacity = 0.2 + Math.random() * 0.2;
+      let opacity = 0.25 + Math.random() * 0.25;
       let colorMultiplier = 1.0;
       
       if (galaxyType < 0.4) {
         // Spiral galaxies
-        opacity = 0.25 + Math.random() * 0.15;
+        opacity = 0.3 + Math.random() * 0.2;
       } else if (galaxyType < 0.7) {
         // Elliptical galaxies (redder)
         colorMultiplier = 0.8;
       } else {
         // Irregular galaxies (smaller, fainter)
-        opacity = 0.15 + Math.random() * 0.1;
+        opacity = 0.18 + Math.random() * 0.12;
       }
       
       const material = new THREE.MeshBasicMaterial({
@@ -577,7 +707,7 @@ function App() {
       
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
-      const dist = 3500 + Math.random() * 2500;
+      const dist = 7000 + Math.random() * 5000;
       
       galaxy.position.set(
         dist * Math.sin(phi) * Math.cos(theta),
@@ -592,19 +722,19 @@ function App() {
     }
 
     // Quasars - extremely bright active galactic nuclei
-    for (let i = 0; i < 8; i++) {
-      const quasarGeometry = new THREE.SphereGeometry(15 + Math.random() * 20, 16, 16);
+    for (let i = 0; i < 12; i++) {
+      const quasarGeometry = new THREE.SphereGeometry(25 + Math.random() * 35, 16, 16);
       const quasarMaterial = new THREE.MeshBasicMaterial({
         color: new THREE.Color(0.8 + Math.random() * 0.2, 0.6 + Math.random() * 0.3, 1.0),
         transparent: true,
-        opacity: 0.7,
+        opacity: 0.75,
         blending: THREE.AdditiveBlending,
       });
       const quasar = new THREE.Mesh(quasarGeometry, quasarMaterial);
       
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
-      const dist = 4500 + Math.random() * 1500;
+      const dist = 8000 + Math.random() * 4000;
       
       quasar.position.set(
         dist * Math.sin(phi) * Math.cos(theta),
@@ -615,7 +745,7 @@ function App() {
       scene.add(quasar);
       
       // Quasar jets
-      const jetGeometry = new THREE.CylinderGeometry(2, 8, 200, 8);
+      const jetGeometry = new THREE.CylinderGeometry(3, 12, 400, 8);
       const jetMaterial = new THREE.MeshBasicMaterial({
         color: 0x88aaff,
         transparent: true,
@@ -746,40 +876,55 @@ function App() {
   };
 
   const createAsteroidBelt = (scene: THREE.Scene) => {
-    const count = 5000;
+    const count = 8000;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     const sizes = new Float32Array(count);
 
-    const innerRadius = 38;
-    const outerRadius = 43;
+    // Asteroid belt between Mars (50) and Jupiter (100)
+    const innerRadius = 65;
+    const outerRadius = 85;
 
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
       const radius = innerRadius + Math.random() * (outerRadius - innerRadius);
-      const height = (Math.random() - 0.5) * 1.5;
+      const height = (Math.random() - 0.5) * 2.5;
 
       positions[i * 3] = Math.cos(angle) * radius;
       positions[i * 3 + 1] = height;
       positions[i * 3 + 2] = Math.sin(angle) * radius;
 
-      const brightness = 0.3 + Math.random() * 0.4;
-      colors[i * 3] = brightness * 0.8;
-      colors[i * 3 + 1] = brightness * 0.7;
-      colors[i * 3 + 2] = brightness * 0.6;
+      const brightness = 0.3 + Math.random() * 0.5;
+      const variation = Math.random();
+      if (variation < 0.3) {
+        // Rocky asteroids
+        colors[i * 3] = brightness * 0.7;
+        colors[i * 3 + 1] = brightness * 0.6;
+        colors[i * 3 + 2] = brightness * 0.5;
+      } else if (variation < 0.7) {
+        // Metallic asteroids
+        colors[i * 3] = brightness * 0.8;
+        colors[i * 3 + 1] = brightness * 0.75;
+        colors[i * 3 + 2] = brightness * 0.7;
+      } else {
+        // Icy asteroids
+        colors[i * 3] = brightness * 0.85;
+        colors[i * 3 + 1] = brightness * 0.9;
+        colors[i * 3 + 2] = brightness * 0.95;
+      }
 
-      sizes[i] = 0.05 + Math.random() * 0.15;
+      sizes[i] = 0.08 + Math.random() * 0.2;
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 0.12,
+      size: 0.15,
       vertexColors: true,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.8,
       sizeAttenuation: true,
     });
 
@@ -1044,27 +1189,6 @@ function App() {
       }
       moonMeshesRef.current.push(moonMeshes);
 
-      // Orbit line
-      const orbitGeometry = new THREE.BufferGeometry();
-      const orbitPoints: THREE.Vector3[] = [];
-      for (let i = 0; i <= 128; i++) {
-        const angle = (i / 128) * Math.PI * 2;
-        orbitPoints.push(new THREE.Vector3(
-          Math.cos(angle) * planetData.distance,
-          0,
-          Math.sin(angle) * planetData.distance
-        ));
-      }
-      orbitGeometry.setFromPoints(orbitPoints);
-      const orbitMaterial = new THREE.LineBasicMaterial({
-        color: 0x4488ff,
-        transparent: true,
-        opacity: 0.12,
-      });
-      const orbit = new THREE.Line(orbitGeometry, orbitMaterial);
-      orbit.rotation.x = planetData.orbitalTilt;
-      scene.add(orbit);
-
       scene.add(group);
       planetMeshesRef.current.push(group);
     });
@@ -1173,6 +1297,18 @@ function App() {
     // Rotate asteroid belt
     if (asteroidBeltRef.current && isPlayingRef.current) {
       asteroidBeltRef.current.rotation.y += 0.0002 * speedRef.current;
+    }
+
+    // Animate star system planets
+    if (isPlayingRef.current) {
+      sceneRef.current?.traverse((object) => {
+        if (object instanceof THREE.Mesh && object.userData.orbitRadius) {
+          const time = elapsed * object.userData.orbitSpeed;
+          const angle = time + object.userData.orbitOffset;
+          object.position.x = Math.cos(angle) * object.userData.orbitRadius;
+          object.position.z = Math.sin(angle) * object.userData.orbitRadius;
+        }
+      });
     }
 
     // Update atmosphere camera positions
