@@ -37,56 +37,69 @@ interface PlanetData {
   hasAtmosphere: boolean;
   atmosphereColor: string;
   description: string;
+  temperature: string;
+  moons: number;
+  type: string;
+  gravity: string;
+  dayLength: string;
 }
 
 const planets: PlanetData[] = [
   {
     name: 'Mercury', nameRu: 'Меркурий', radius: 0.4, distance: 8,
     realDiameter: 4879, realDistance: 57.9, orbitalPeriod: 88, speed: 4.15,
-    rotationSpeed: 0.005, tilt: 0.03, hasAtmosphere: false, atmosphereColor: '#000',
-    description: 'Самая маленькая планета. Температура от -180°C до +430°C. Поверхность покрыта кратерами.',
+    rotationSpeed: 0.005, tilt: 0.03, hasAtmosphere: false, atmosphereColor: '#b5b5b5',
+    description: 'Самая маленькая планета. Поверхность покрыта кратерами, похожа на Луну. Нет атмосферы и спутников.',
+    temperature: '-180°C до +430°C', moons: 0, type: 'Скалистая', gravity: '3.7 м/с²', dayLength: '59 дней',
   },
   {
     name: 'Venus', nameRu: 'Венера', radius: 0.9, distance: 12,
     realDiameter: 12104, realDistance: 108.2, orbitalPeriod: 225, speed: 1.62,
     rotationSpeed: -0.002, tilt: 2.64, hasAtmosphere: true, atmosphereColor: '#e8cda0',
-    description: 'Самая горячая планета (+462°C). Плотная атмосфера из CO₂. Вращается в обратном направлении.',
+    description: 'Самая горячая планета из-за парникового эффекта. Плотная атмосфера из CO₂ создаёт давление в 90 раз выше земного.',
+    temperature: '+462°C', moons: 0, type: 'Скалистая', gravity: '8.87 м/с²', dayLength: '243 дня',
   },
   {
     name: 'Earth', nameRu: 'Земля', radius: 1, distance: 16,
     realDiameter: 12756, realDistance: 149.6, orbitalPeriod: 365, speed: 1.0,
     rotationSpeed: 0.02, tilt: 0.41, hasAtmosphere: true, atmosphereColor: '#4da6ff',
-    description: 'Единственная планета с жизнью. 71% поверхности — вода. Имеет один спутник — Луну.',
+    description: 'Единственная известная планета с жизнью. 71% поверхности покрыт водой. Магнитное поле защищает от солнечного ветра.',
+    temperature: '-89°C до +57°C', moons: 1, type: 'Скалистая', gravity: '9.81 м/с²', dayLength: '24 часа',
   },
   {
     name: 'Mars', nameRu: 'Марс', radius: 0.6, distance: 21,
     realDiameter: 6792, realDistance: 227.9, orbitalPeriod: 687, speed: 0.53,
     rotationSpeed: 0.018, tilt: 0.44, hasAtmosphere: true, atmosphereColor: '#e85d3a',
-    description: 'Красная планета. Гора Олимп — 21.9 км. Имеет два спутника: Фобос и Деймос.',
+    description: 'Красная планета. Здесь находится гора Олимп — высочайший вулкан в Солнечной системе (21.9 км).',
+    temperature: '-140°C до +20°C', moons: 2, type: 'Скалистая', gravity: '3.72 м/с²', dayLength: '24.6 часа',
   },
   {
     name: 'Jupiter', nameRu: 'Юпитер', radius: 2.8, distance: 30,
     realDiameter: 142984, realDistance: 778.5, orbitalPeriod: 4333, speed: 0.084,
     rotationSpeed: 0.04, tilt: 0.05, hasAtmosphere: true, atmosphereColor: '#e8a952',
-    description: 'Крупнейшая планета. Большое Красное Пятно — шторм размером больше Земли. 95 спутников.',
+    description: 'Крупнейшая планета. Большое Красное Пятно — гигантский шторм, бушующий более 350 лет. Мощнейшее магнитное поле.',
+    temperature: '-110°C', moons: 95, type: 'Газовый гигант', gravity: '24.79 м/с²', dayLength: '9.9 часа',
   },
   {
     name: 'Saturn', nameRu: 'Сатурн', radius: 2.4, distance: 40,
     realDiameter: 120536, realDistance: 1434, orbitalPeriod: 10759, speed: 0.034,
     rotationSpeed: 0.038, tilt: 0.47, hasAtmosphere: true, atmosphereColor: '#f0d68a',
-    description: 'Знаменит кольцами из льда и камней. Плотность меньше воды. 146 известных спутников.',
+    description: 'Знаменит кольцами из льда и камней шириной 282 000 км, но толщиной всего 10 метров. Плотность меньше воды.',
+    temperature: '-178°C', moons: 146, type: 'Газовый гигант', gravity: '10.44 м/с²', dayLength: '10.7 часа',
   },
   {
     name: 'Uranus', nameRu: 'Уран', radius: 1.6, distance: 50,
     realDiameter: 51118, realDistance: 2871, orbitalPeriod: 30687, speed: 0.012,
     rotationSpeed: 0.03, tilt: 1.71, hasAtmosphere: true, atmosphereColor: '#7de8e8',
-    description: 'Ледяной гигант. Ось наклонена на 98° — вращается «лёжа на боку». Температура -224°C.',
+    description: 'Ледяной гигант с уникальным наклоном оси 98° — вращается «лёжа на боку». Атмосфера содержит метан, придающий голубой цвет.',
+    temperature: '-224°C', moons: 27, type: 'Ледяной гигант', gravity: '8.87 м/с²', dayLength: '17.2 часа',
   },
   {
     name: 'Neptune', nameRu: 'Нептун', radius: 1.5, distance: 60,
     realDiameter: 49528, realDistance: 4495, orbitalPeriod: 60190, speed: 0.006,
     rotationSpeed: 0.032, tilt: 0.49, hasAtmosphere: true, atmosphereColor: '#4166f5',
-    description: 'Самая далёкая планета. Ветры до 2100 км/ч. Имеет 16 известных спутников.',
+    description: 'Самая далёкая планета. Здесь дуют самые быстрые ветры в Солнечной системе — до 2100 км/ч. Открыт математически.',
+    temperature: '-218°C', moons: 16, type: 'Ледяной гигант', gravity: '11.15 м/с²', dayLength: '16.1 часа',
   },
 ];
 
@@ -107,10 +120,13 @@ function App() {
   const sunMaterialRef = useRef<THREE.ShaderMaterial | null>(null);
   const asteroidBeltRef = useRef<THREE.Points | null>(null);
   const atmosphereMaterialsRef = useRef<THREE.ShaderMaterial[]>([]);
+  const hoverOutlinesRef = useRef<THREE.Mesh[]>([]);
+  const hoveredIndexRef = useRef<number | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [speed, setSpeed] = useState(1);
   const [selectedPlanet, setSelectedPlanet] = useState<PlanetData | null>(null);
+  const [hoveredPlanet, setHoveredPlanet] = useState<PlanetData | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -419,6 +435,20 @@ function App() {
       planet.userData = { planetIndex: index };
       group.add(planet);
 
+      // Hover outline (initially invisible)
+      const outlineGeometry = new THREE.SphereGeometry(planetData.radius * 1.12, 32, 32);
+      const outlineMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0,
+        side: THREE.BackSide,
+        depthWrite: false,
+      });
+      const outline = new THREE.Mesh(outlineGeometry, outlineMaterial);
+      outline.rotation.z = planetData.tilt;
+      group.add(outline);
+      hoverOutlinesRef.current.push(outline);
+
       // Atmosphere
       if (planetData.hasAtmosphere) {
         const atmosGeometry = new THREE.SphereGeometry(planetData.radius * 1.06, 32, 32);
@@ -548,6 +578,14 @@ function App() {
       mat.uniforms.uCameraPosition.value.copy(cameraRef.current!.position);
     });
 
+    // Update hover outlines
+    hoverOutlinesRef.current.forEach((outline, i) => {
+      const mat = outline.material as THREE.MeshBasicMaterial;
+      const isHovered = hoveredIndexRef.current === i;
+      const targetOpacity = isHovered ? 0.6 : 0;
+      mat.opacity += (targetOpacity - mat.opacity) * 0.15;
+    });
+
     controlsRef.current?.update();
     rendererRef.current.render(sceneRef.current, cameraRef.current);
     animationRef.current = requestAnimationFrame(animate);
@@ -557,6 +595,42 @@ function App() {
     animationRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationRef.current);
   }, [animate]);
+
+  const handleHover = useCallback((clientX: number, clientY: number) => {
+    if (!cameraRef.current || !rendererRef.current) return;
+
+    const rect = rendererRef.current.domElement.getBoundingClientRect();
+    mouseRef.current.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+    mouseRef.current.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
+
+    // Check planet hits
+    const meshes: THREE.Mesh[] = [];
+    planetMeshesRef.current.forEach(group => {
+      group.children.forEach(child => {
+        if (child instanceof THREE.Mesh && child.userData.planetIndex !== undefined) {
+          meshes.push(child);
+        }
+      });
+    });
+
+    const intersects = raycasterRef.current.intersectObjects(meshes);
+    if (intersects.length > 0) {
+      const planetIndex = intersects[0].object.userData.planetIndex;
+      if (hoveredIndexRef.current !== planetIndex) {
+        hoveredIndexRef.current = planetIndex;
+        setHoveredPlanet(planets[planetIndex]);
+      }
+      rendererRef.current.domElement.style.cursor = 'pointer';
+    } else {
+      if (hoveredIndexRef.current !== null) {
+        hoveredIndexRef.current = null;
+        setHoveredPlanet(null);
+      }
+      rendererRef.current.domElement.style.cursor = 'grab';
+    }
+  }, []);
 
   const handleInteraction = useCallback((clientX: number, clientY: number) => {
     if (!cameraRef.current || !rendererRef.current) return;
@@ -590,6 +664,10 @@ function App() {
     handleInteraction(e.clientX, e.clientY);
   }, [handleInteraction]);
 
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    handleHover(e.clientX, e.clientY);
+  }, [handleHover]);
+
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     if (e.changedTouches.length === 1) {
       const touch = e.changedTouches[0];
@@ -605,6 +683,7 @@ function App() {
         ref={containerRef}
         className="absolute inset-0"
         onClick={handleClick}
+        onMouseMove={handleMouseMove}
         onTouchEnd={handleTouchEnd}
       />
 
@@ -612,27 +691,49 @@ function App() {
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black z-50">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-white/70 text-sm">Загрузка Солнечной системы...</p>
+            <div className="relative w-20 h-20 mx-auto mb-6">
+              <div className="absolute inset-0 rounded-full border-2 border-yellow-500/20" />
+              <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-yellow-400 animate-spin" />
+              <div className="absolute inset-2 rounded-full border-2 border-transparent border-t-orange-400 animate-spin" style={{ animationDuration: '1.5s' }} />
+              <div className="absolute inset-4 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 animate-pulse" />
+            </div>
+            <p className="text-white/80 text-sm font-light tracking-wider">ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ...</p>
           </div>
         </div>
       )}
 
-      {/* Title */}
-      <div className="absolute top-3 md:top-4 left-1/2 -translate-x-1/2 text-center pointer-events-none z-10">
-        <h1 className="text-lg md:text-3xl font-bold text-white/90 tracking-wide drop-shadow-[0_0_10px_rgba(255,200,50,0.5)]">
-          🌌 Солнечная система
-        </h1>
-        <p className="text-[10px] md:text-sm text-white/40 mt-0.5 md:mt-1">
-          {isMobile ? 'Касание для выбора • Жесты для вращения' : 'Клик на планету • Колёсико для масштаба • Перетаскивание для вращения'}
-        </p>
+      {/* Header */}
+      <div className="absolute top-0 left-0 right-0 z-10 pointer-events-none">
+        <div className="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-yellow-400/20 to-orange-500/20 backdrop-blur-xl border border-yellow-400/30 flex items-center justify-center shadow-lg shadow-yellow-500/20">
+              <span className="text-xl md:text-2xl">☀️</span>
+            </div>
+            <div>
+              <h1 className="text-base md:text-xl font-bold text-white tracking-wide">
+                Солнечная система
+              </h1>
+              <p className="text-[10px] md:text-xs text-white/40 font-light">
+                Интерактивная 3D модель
+              </p>
+            </div>
+          </div>
+          
+          {!isMobile && (
+            <div className="text-right">
+              <p className="text-[10px] text-white/30 font-light">
+                {hoveredPlanet ? hoveredPlanet.nameRu : 'Наведите на планету'}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Mobile toggle */}
       {isMobile && (
         <button
           onClick={() => setShowControls(!showControls)}
-          className="absolute top-16 right-3 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white text-sm"
+          className="absolute top-16 right-3 z-20 w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 text-white hover:bg-white/10 transition-all shadow-lg"
         >
           {showControls ? '✕' : '⚙️'}
         </button>
@@ -640,39 +741,50 @@ function App() {
 
       {/* Controls */}
       {(!isMobile || showControls) && (
-        <div className="absolute bottom-3 md:bottom-6 left-1/2 -translate-x-1/2 flex flex-col md:flex-row items-center gap-2 md:gap-3 bg-black/70 backdrop-blur-xl rounded-2xl px-3 md:px-5 py-2.5 md:py-3 border border-white/10 z-10 max-w-[92vw] shadow-[0_0_30px_rgba(0,100,255,0.1)]">
-          <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 transition-all text-white flex-shrink-0"
-          >
-            {isPlaying ? (
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                <rect x="3" y="2" width="4" height="12" rx="1" />
-                <rect x="9" y="2" width="4" height="12" rx="1" />
-              </svg>
-            ) : (
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M4 2l10 6-10 6V2z" />
-              </svg>
-            )}
-          </button>
+        <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-10">
+          <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4 bg-gradient-to-r from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-2xl rounded-2xl px-4 md:px-6 py-3 md:py-4 border border-white/10 shadow-2xl shadow-black/50">
+            {/* Play/Pause */}
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="group relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 border border-white/10 transition-all text-white flex-shrink-0 shadow-lg"
+            >
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-400/0 to-purple-400/0 group-hover:from-blue-400/10 group-hover:to-purple-400/10 transition-all" />
+              {isPlaying ? (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="relative">
+                  <rect x="3" y="2" width="4" height="12" rx="1" />
+                  <rect x="9" y="2" width="4" height="12" rx="1" />
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="relative">
+                  <path d="M4 2l10 6-10 6V2z" />
+                </svg>
+              )}
+            </button>
 
-          <div className="flex items-center gap-1.5 md:gap-2">
-            <span className="text-white/50 text-[10px] md:text-xs flex-shrink-0">Скорость:</span>
-            <div className="flex gap-0.5 md:gap-1 overflow-x-auto">
-              {speedOptions.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setSpeed(s)}
-                  className={`px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium transition-all flex-shrink-0 ${
-                    speed === s
-                      ? 'bg-blue-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.5)]'
-                      : 'bg-white/10 text-white/60 hover:bg-white/20 active:bg-white/30'
-                  }`}
-                >
-                  {s}x
-                </button>
-              ))}
+            {/* Speed control */}
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/40">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                <span className="text-white/50 text-xs font-medium">Скорость</span>
+              </div>
+              <div className="flex gap-1">
+                {speedOptions.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSpeed(s)}
+                    className={`px-2 md:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex-shrink-0 ${
+                      speed === s
+                        ? 'bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/30 scale-105'
+                        : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80 border border-white/5'
+                    }`}
+                  >
+                    {s}x
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -680,81 +792,183 @@ function App() {
 
       {/* Planet info panel */}
       {selectedPlanet && (
-        <div className="absolute top-14 md:top-20 right-2 md:right-8 w-56 md:w-72 bg-black/80 backdrop-blur-xl rounded-2xl border border-white/15 p-3 md:p-5 text-white animate-fadeIn z-20 max-h-[55vh] overflow-y-auto shadow-[0_0_40px_rgba(0,100,255,0.15)]">
-          <div className="flex items-center justify-between mb-2 md:mb-4">
-            <div className="flex items-center gap-2 md:gap-3">
-              <div
-                className="w-6 h-6 md:w-8 md:h-8 rounded-full shadow-lg flex-shrink-0"
-                style={{
-                  background: `radial-gradient(circle at 30% 30%, #fff, ${
-                    planets.find(p => p.name === selectedPlanet.name)?.name === 'Earth' ? '#4da6ff' :
-                    planets.find(p => p.name === selectedPlanet.name)?.name === 'Mars' ? '#e85d3a' :
-                    planets.find(p => p.name === selectedPlanet.name)?.name === 'Jupiter' ? '#e8a952' :
-                    planets.find(p => p.name === selectedPlanet.name)?.name === 'Saturn' ? '#f0d68a' :
-                    planets.find(p => p.name === selectedPlanet.name)?.name === 'Venus' ? '#e8cda0' :
-                    planets.find(p => p.name === selectedPlanet.name)?.name === 'Mercury' ? '#b5b5b5' :
-                    planets.find(p => p.name === selectedPlanet.name)?.name === 'Uranus' ? '#7de8e8' : '#4166f5'
-                  })`,
-                }}
-              />
-              <div>
-                <h2 className="text-sm md:text-lg font-bold">{selectedPlanet.nameRu}</h2>
-                <p className="text-[10px] md:text-xs text-white/50">{selectedPlanet.name}</p>
+        <div className="absolute top-20 md:top-24 right-2 md:right-6 w-72 md:w-80 animate-fadeIn z-20">
+          <div className="bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl shadow-black/50 overflow-hidden">
+            {/* Header with gradient */}
+            <div className="relative p-4 md:p-5 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border-b border-white/5">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div
+                      className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-2xl"
+                      style={{
+                        background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), ${selectedPlanet.atmosphereColor})`,
+                        boxShadow: `0 0 30px ${selectedPlanet.atmosphereColor}40`,
+                      }}
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg md:text-xl font-bold text-white">{selectedPlanet.nameRu}</h2>
+                    <p className="text-xs text-white/40 font-light">{selectedPlanet.name}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedPlanet(null)}
+                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
               </div>
             </div>
-            <button
-              onClick={() => setSelectedPlanet(null)}
-              className="w-6 h-6 md:w-7 md:h-7 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white flex-shrink-0 text-xs"
-            >
-              ✕
-            </button>
-          </div>
 
-          <div className="space-y-1.5 md:space-y-3">
-            <InfoRow icon="📏" label="Диаметр" value={`${selectedPlanet.realDiameter.toLocaleString()} км`} />
-            <InfoRow icon="☀️" label="Расстояние" value={`${selectedPlanet.realDistance} млн км`} />
-            <InfoRow icon="🔄" label="Год" value={formatOrbitalPeriod(selectedPlanet.orbitalPeriod)} />
-          </div>
+            {/* Stats grid */}
+            <div className="p-4 md:p-5 space-y-3">
+              {/* Type badge */}
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-white/10 text-[10px] md:text-xs text-white/70 font-medium">
+                  {selectedPlanet.type}
+                </span>
+              </div>
 
-          <div className="mt-2 md:mt-4 pt-2 md:pt-3 border-t border-white/10">
-            <p className="text-[10px] md:text-xs text-white/60 leading-relaxed">{selectedPlanet.description}</p>
+              <div className="grid grid-cols-2 gap-2 md:gap-3">
+                <StatCard
+                  icon="📏"
+                  label="Диаметр"
+                  value={`${selectedPlanet.realDiameter.toLocaleString()}`}
+                  unit="км"
+                  color="blue"
+                />
+                <StatCard
+                  icon="☀️"
+                  label="До Солнца"
+                  value={`${selectedPlanet.realDistance}`}
+                  unit="млн км"
+                  color="yellow"
+                />
+                <StatCard
+                  icon="🌡️"
+                  label="Температура"
+                  value={selectedPlanet.temperature}
+                  unit=""
+                  color="red"
+                />
+                <StatCard
+                  icon="⚖️"
+                  label="Гравитация"
+                  value={selectedPlanet.gravity}
+                  unit=""
+                  color="green"
+                />
+                <StatCard
+                  icon="🔄"
+                  label="Год"
+                  value={formatOrbitalPeriod(selectedPlanet.orbitalPeriod)}
+                  unit=""
+                  color="purple"
+                />
+                <StatCard
+                  icon="🌙"
+                  label="Спутники"
+                  value={`${selectedPlanet.moons}`}
+                  unit=""
+                  color="pink"
+                />
+                <StatCard
+                  icon="⏱️"
+                  label="Длина дня"
+                  value={selectedPlanet.dayLength}
+                  unit=""
+                  color="cyan"
+                  wide
+                />
+              </div>
+
+              {/* Description */}
+              <div className="pt-3 border-t border-white/5">
+                <p className="text-xs md:text-sm text-white/60 leading-relaxed">
+                  {selectedPlanet.description}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
       {/* Planet list - desktop */}
       {!isMobile && (
-        <div className="absolute top-20 left-4 md:left-8 flex flex-col gap-0.5 z-10">
-          {planets.map((planet) => (
-            <button
-              key={planet.name}
-              onClick={() => setSelectedPlanet(planet)}
-              className={`flex items-center gap-2 px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-left transition-all ${
-                selectedPlanet?.name === planet.name
-                  ? 'bg-white/15 text-white shadow-[0_0_10px_rgba(100,150,255,0.2)]'
-                  : 'bg-transparent text-white/50 hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              <div
-                className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full flex-shrink-0"
-                style={{ backgroundColor: planet.atmosphereColor }}
-              />
-              <span className="text-xs md:text-sm">{planet.nameRu}</span>
-            </button>
-          ))}
+        <div className="absolute top-24 left-4 md:left-6 z-10">
+          <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-2xl rounded-2xl border border-white/10 p-2 shadow-2xl shadow-black/50">
+            <div className="flex flex-col gap-1">
+              {planets.map((planet, index) => (
+                <button
+                  key={planet.name}
+                  onClick={() => setSelectedPlanet(planet)}
+                  className={`group flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-all ${
+                    selectedPlanet?.name === planet.name
+                      ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-white/10'
+                      : 'text-white/50 hover:bg-white/5 hover:text-white/80'
+                  }`}
+                >
+                  <div className="relative">
+                    <div
+                      className="w-3 h-3 rounded-full transition-transform group-hover:scale-125"
+                      style={{ 
+                        backgroundColor: planet.atmosphereColor,
+                        boxShadow: selectedPlanet?.name === planet.name ? `0 0 10px ${planet.atmosphereColor}` : 'none'
+                      }}
+                    />
+                    {selectedPlanet?.name === planet.name && (
+                      <div className="absolute inset-0 rounded-full animate-ping" style={{ backgroundColor: planet.atmosphereColor, opacity: 0.3 }} />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium truncate">{planet.nameRu}</p>
+                    <p className="text-[10px] text-white/30 truncate">{planet.name}</p>
+                  </div>
+                  <span className="text-[10px] text-white/30">{index + 1}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-function InfoRow({ icon, label, value }: { icon: string; label: string; value: string }) {
+function StatCard({ icon, label, value, unit, color, wide }: { 
+  icon: string; 
+  label: string; 
+  value: string; 
+  unit: string;
+  color: string;
+  wide?: boolean;
+}) {
+  const colorClasses: Record<string, string> = {
+    blue: 'from-blue-500/10 to-blue-600/5 border-blue-400/20',
+    yellow: 'from-yellow-500/10 to-orange-500/5 border-yellow-400/20',
+    purple: 'from-purple-500/10 to-pink-500/5 border-purple-400/20',
+    green: 'from-green-500/10 to-emerald-500/5 border-green-400/20',
+    red: 'from-red-500/10 to-orange-500/5 border-red-400/20',
+    pink: 'from-pink-500/10 to-rose-500/5 border-pink-400/20',
+    cyan: 'from-cyan-500/10 to-teal-500/5 border-cyan-400/20',
+  };
+
   return (
-    <div className="flex items-start gap-1.5 md:gap-2">
-      <span className="text-xs md:text-base flex-shrink-0">{icon}</span>
-      <div className="min-w-0">
-        <p className="text-[10px] md:text-xs text-white/50">{label}</p>
-        <p className="text-[11px] md:text-sm font-medium break-words">{value}</p>
+    <div className={`relative p-2.5 md:p-3 rounded-xl bg-gradient-to-br ${colorClasses[color]} border backdrop-blur-sm ${wide ? 'col-span-2' : ''}`}>
+      <div className="flex items-start gap-2">
+        <span className="text-sm md:text-base">{icon}</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-[9px] md:text-[10px] text-white/40 font-light mb-0.5">{label}</p>
+          <p className="text-xs md:text-sm font-bold text-white truncate">
+            {value}
+            {unit && <span className="text-[10px] md:text-xs text-white/50 font-normal ml-1">{unit}</span>}
+          </p>
+        </div>
       </div>
     </div>
   );
