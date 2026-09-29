@@ -16,7 +16,6 @@ import {
   generateUranusTexture,
   generateNeptuneTexture,
   generatePlutoTexture,
-  generateNebulaTexture,
   generateBumpMap,
   generateColoredNebulaTexture,
   generateGalaxyTexture,
@@ -229,7 +228,7 @@ function App() {
       if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
         setFreeFlyMode(prev => {
           const newMode = !prev;
-          if (newMode && rendererRef.current) {
+          if (newMode && rendererRef.current?.domElement) {
             // Request pointer lock when entering free fly
             rendererRef.current.domElement.requestPointerLock();
           } else {
@@ -1207,13 +1206,15 @@ function App() {
     }
 
     // Update atmosphere camera positions
-    atmosphereMaterialsRef.current.forEach(mat => {
-      mat.uniforms.uCameraPosition.value.copy(cameraRef.current!.position);
-    });
+    if (cameraRef.current) {
+      atmosphereMaterialsRef.current.forEach(mat => {
+        mat.uniforms.uCameraPosition.value.copy(cameraRef.current!.position);
+      });
 
-    // Update aurora camera position
-    if (auroraMaterialRef.current) {
-      auroraMaterialRef.current.uniforms.uCameraPosition.value.copy(cameraRef.current!.position);
+      // Update aurora camera position
+      if (auroraMaterialRef.current) {
+        auroraMaterialRef.current.uniforms.uCameraPosition.value.copy(cameraRef.current!.position);
+      }
     }
 
     // Update hover outlines
@@ -1263,17 +1264,21 @@ function App() {
         cameraRef.current.position.add(movement);
       }
 
-      controlsRef.current!.enabled = false;
+      if (controlsRef.current) {
+        controlsRef.current.enabled = false;
+      }
     } else {
-      controlsRef.current!.enabled = true;
-      controlsRef.current?.update();
+      if (controlsRef.current) {
+        controlsRef.current.enabled = true;
+        controlsRef.current.update();
+      }
     }
 
     // Use composer for post-processing
     if (composerRef.current) {
       composerRef.current.render();
-    } else {
-      rendererRef.current!.render(sceneRef.current!, cameraRef.current!);
+    } else if (rendererRef.current && sceneRef.current && cameraRef.current) {
+      rendererRef.current.render(sceneRef.current, cameraRef.current);
     }
     
     animationRef.current = requestAnimationFrame(animate);
@@ -1295,7 +1300,10 @@ function App() {
   const handleHover = useCallback((clientX: number, clientY: number) => {
     if (!cameraRef.current || !rendererRef.current || freeFlyModeRef.current) return;
 
-    const rect = rendererRef.current.domElement.getBoundingClientRect();
+    const domElement = rendererRef.current.domElement;
+    if (!domElement) return;
+
+    const rect = domElement.getBoundingClientRect();
     mouseRef.current.x = ((clientX - rect.left) / rect.width) * 2 - 1;
     mouseRef.current.y = -((clientY - rect.top) / rect.height) * 2 + 1;
 
@@ -1317,20 +1325,23 @@ function App() {
         hoveredIndexRef.current = planetIndex;
         setHoveredPlanet(planets[planetIndex]);
       }
-      rendererRef.current.domElement.style.cursor = 'pointer';
+      domElement.style.cursor = 'pointer';
     } else {
       if (hoveredIndexRef.current !== null) {
         hoveredIndexRef.current = null;
         setHoveredPlanet(null);
       }
-      rendererRef.current.domElement.style.cursor = 'grab';
+      domElement.style.cursor = 'grab';
     }
   }, []);
 
   const handleInteraction = useCallback((clientX: number, clientY: number) => {
     if (!cameraRef.current || !rendererRef.current) return;
 
-    const rect = rendererRef.current.domElement.getBoundingClientRect();
+    const domElement = rendererRef.current.domElement;
+    if (!domElement) return;
+
+    const rect = domElement.getBoundingClientRect();
     mouseRef.current.x = ((clientX - rect.left) / rect.width) * 2 - 1;
     mouseRef.current.y = -((clientY - rect.top) / rect.height) * 2 + 1;
 
@@ -1478,7 +1489,7 @@ function App() {
 
             <button
               onClick={() => {
-                if (!freeFlyMode && rendererRef.current) {
+                if (!freeFlyMode && rendererRef.current?.domElement) {
                   rendererRef.current.domElement.requestPointerLock();
                 } else {
                   document.exitPointerLock();
