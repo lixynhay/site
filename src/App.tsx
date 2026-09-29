@@ -272,93 +272,6 @@ function App() {
     };
   }, []);
 
-  const initScene = useCallback(() => {
-    if (!containerRef.current) return;
-
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x000005, 0.00015);
-    sceneRef.current = scene;
-
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 20000);
-    camera.position.set(0, 100, 250);
-    cameraRef.current = camera;
-
-    const renderer = new THREE.WebGLRenderer({ 
-      antialias: true, 
-      alpha: false, 
-      powerPreference: 'high-performance',
-      stencil: false,
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    containerRef.current.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
-
-    const composer = new EffectComposer(renderer);
-    const renderPass = new RenderPass(scene, camera);
-    composer.addPass(renderPass);
-
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.5,  // strength - increased for more dramatic glow
-      0.8,  // radius - softer glow
-      0.7   // threshold - catch more bright areas
-    );
-    composer.addPass(bloomPass);
-    composerRef.current = composer;
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.minDistance = 10;
-    controls.maxDistance = 500;
-    controls.maxPolarAngle = Math.PI * 0.85;
-    controls.rotateSpeed = 0.5;
-    controls.zoomSpeed = 0.8;
-    controlsRef.current = controls;
-
-    const ambientLight = new THREE.AmbientLight(0x111122, 0.5);
-    scene.add(ambientLight);
-
-    const sunLight = new THREE.PointLight(0xfff5e0, 5, 600, 0.4);
-    sunLight.position.set(0, 0, 0);
-    sunLight.castShadow = false;
-    scene.add(sunLight);
-
-    // Additional fill light for better visibility
-    const fillLight = new THREE.DirectionalLight(0x4466aa, 0.3);
-    fillLight.position.set(50, 30, 50);
-    scene.add(fillLight);
-
-    createStarfield(scene);
-    createNebulae(scene);
-    createSun(scene);
-    createAsteroidBelt(scene);
-    createPlanets(scene);
-    createCME(scene);
-
-    const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      composer.setSize(window.innerWidth, window.innerHeight);
-    };
-    window.addEventListener('resize', handleResize);
-
-    setLoading(false);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (containerRef.current && renderer.domElement.parentNode === containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
-    };
-  }, []);
-
   const createStarfield = (scene: THREE.Scene) => {
     // Diverse star types with realistic colors and sizes
     const starTypes = [
@@ -532,9 +445,6 @@ function App() {
     const milkyWay = new THREE.Points(milkyWayGeometry, milkyWayMaterial);
     milkyWay.rotation.x = Math.PI * 0.35;
     scene.add(milkyWay);
-
-    // Add star systems (stars with planets)
-    this.createStarSystems(scene);
   };
 
   const createStarSystems = (scene: THREE.Scene) => {
@@ -1193,6 +1103,94 @@ function App() {
       planetMeshesRef.current.push(group);
     });
   };
+
+  const initScene = useCallback(() => {
+    if (!containerRef.current) return;
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000005, 0.00015);
+    sceneRef.current = scene;
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 20000);
+    camera.position.set(0, 100, 250);
+    cameraRef.current = camera;
+
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true, 
+      alpha: false, 
+      powerPreference: 'high-performance',
+      stencil: false,
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    containerRef.current.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
+
+    const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      1.5,  // strength - increased for more dramatic glow
+      0.8,  // radius - softer glow
+      0.7   // threshold - catch more bright areas
+    );
+    composer.addPass(bloomPass);
+    composerRef.current = composer;
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 10;
+    controls.maxDistance = 500;
+    controls.maxPolarAngle = Math.PI * 0.85;
+    controls.rotateSpeed = 0.5;
+    controls.zoomSpeed = 0.8;
+    controlsRef.current = controls;
+
+    const ambientLight = new THREE.AmbientLight(0x111122, 0.5);
+    scene.add(ambientLight);
+
+    const sunLight = new THREE.PointLight(0xfff5e0, 5, 600, 0.4);
+    sunLight.position.set(0, 0, 0);
+    sunLight.castShadow = false;
+    scene.add(sunLight);
+
+    // Additional fill light for better visibility
+    const fillLight = new THREE.DirectionalLight(0x4466aa, 0.3);
+    fillLight.position.set(50, 30, 50);
+    scene.add(fillLight);
+
+    createStarfield(scene);
+    createStarSystems(scene);
+    createNebulae(scene);
+    createSun(scene);
+    createAsteroidBelt(scene);
+    createPlanets(scene);
+    createCME(scene);
+
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+
+    setLoading(false);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (containerRef.current && renderer.domElement.parentNode === containerRef.current) {
+        containerRef.current.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+    };
+  }, []);
 
   useEffect(() => {
     const cleanup = initScene();
