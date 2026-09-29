@@ -174,7 +174,9 @@ function App() {
   ));
   const animationRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
-  const clockRef = useRef<THREE.Clock>(new THREE.Clock());
+  const clockRef = useRef<{ getElapsedTime: () => number }>({
+    getElapsedTime: () => performance.now() / 1000
+  });
   const raycasterRef = useRef(new THREE.Raycaster());
   const mouseRef = useRef(new THREE.Vector2());
   const hoverOutlinesRef = useRef<THREE.Mesh[]>([]);
@@ -203,7 +205,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [freeFlyMode, setFreeFlyMode] = useState(false);
   const [simulationDate, setSimulationDate] = useState(new Date());
-  const [useRealTextures, setUseRealTextures] = useState(false);
 
   const isPlayingRef = useRef(isPlaying);
   const speedRef = useRef(speed);
@@ -842,27 +843,16 @@ function App() {
       generatePlutoTexture,
     ];
 
-    // NASA texture URLs (public domain)
-    const nasaTextureUrls = [
-      'https://svs.gsfc.nasa.gov/vis/images/disk/TOPO_MERCURY_2016_2K.jpg',
-      'https://svs.gsfc.nasa.gov/vis/images/disk/TOPO_VENUS_2016_2K.jpg',
-      'https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57747/blue_marble_topo.world.200412.3x21600x10800.jpg',
-      'https://svs.gsfc.nasa.gov/vis/images/disk/TOPO_MARS_2016_2K.jpg',
-      'https://svs.gsfc.nasa.gov/vis/images/disk/jupiter.jpg',
-      'https://svs.gsfc.nasa.gov/vis/images/disk/saturn.jpg',
-      'https://svs.gsfc.nasa.gov/vis/images/disk/uranus.jpg',
-      'https://svs.gsfc.nasa.gov/vis/images/disk/neptune.jpg',
-    ];
-
     const bumpConfigs = [
-      { scale: 12, octaves: 5, strength: 0.3 },
-      { scale: 8, octaves: 4, strength: 0.1 },
-      { scale: 10, octaves: 5, strength: 0.2 },
-      { scale: 10, octaves: 5, strength: 0.25 },
-      { scale: 15, octaves: 3, strength: 0.05 },
-      { scale: 15, octaves: 3, strength: 0.05 },
-      { scale: 12, octaves: 3, strength: 0.05 },
-      { scale: 12, octaves: 3, strength: 0.05 },
+      { scale: 12, octaves: 5, strength: 0.3 },  // Mercury
+      { scale: 8, octaves: 4, strength: 0.1 },   // Venus
+      { scale: 10, octaves: 5, strength: 0.2 },  // Earth
+      { scale: 10, octaves: 5, strength: 0.25 }, // Mars
+      { scale: 15, octaves: 3, strength: 0.05 }, // Jupiter
+      { scale: 15, octaves: 3, strength: 0.05 }, // Saturn
+      { scale: 12, octaves: 3, strength: 0.05 }, // Uranus
+      { scale: 12, octaves: 3, strength: 0.05 }, // Neptune
+      { scale: 10, octaves: 4, strength: 0.15 }, // Pluto
     ];
 
     planets.forEach((planetData, index) => {
@@ -878,26 +868,6 @@ function App() {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
       texture.anisotropy = 8;
-
-      // Try to load NASA texture
-      const loader = new THREE.TextureLoader();
-      loader.load(
-        nasaTextureUrls[index],
-        (nasaTexture) => {
-          nasaTexture.wrapS = THREE.RepeatWrapping;
-          nasaTexture.wrapT = THREE.RepeatWrapping;
-          nasaTexture.anisotropy = 8;
-          const planetMesh = group.children[0] as THREE.Mesh;
-          if (planetMesh && planetMesh.material instanceof THREE.MeshStandardMaterial) {
-            planetMesh.material.map = nasaTexture;
-            planetMesh.material.needsUpdate = true;
-          }
-        },
-        undefined,
-        (error) => {
-          console.log(`Using procedural texture for ${planetData.name}`);
-        }
-      );
 
       const bumpConfig = bumpConfigs[index];
       const bumpMap = generateBumpMap(512, bumpConfig.scale, bumpConfig.octaves);
@@ -1503,17 +1473,6 @@ function App() {
               }`}
             >
               {freeFlyMode ? '🚀 Полёт' : '🎮 Полёт'}
-            </button>
-
-            <button
-              onClick={() => setUseRealTextures(!useRealTextures)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                useRealTextures
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/40'
-                  : 'bg-white/10 text-white/60 hover:bg-white/15 hover:text-white/90 border border-white/10'
-              }`}
-            >
-              {useRealTextures ? '🛰️ NASA' : '🎨 Процедурные'}
             </button>
           </div>
         </div>
